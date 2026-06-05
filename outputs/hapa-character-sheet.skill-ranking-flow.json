@@ -1,0 +1,92 @@
+{
+  "id": "hapa-character-sheet-skill-ranking-protocol",
+  "name": "Skill Quality and Avatar Experience Ranking",
+  "summary": "Continuously rank skill quality and avatar experience from Second Brain, Hapa node, and Avatar Dashboard evidence.",
+  "color": 6212308,
+  "steps": [
+    {
+      "source": "Hapa Second Brain",
+      "target": "Character Sheet Rank Engine",
+      "layer": "DATA",
+      "label": "Load skills, evidence, capabilities, and nodes.",
+      "explanation": [
+        "Second Brain provides the skill inventory, evidence counts, source diversity, artifacts, node capabilities, and bridge reach.",
+        "The rank engine treats those records as read-only source truth and computes relative skill quality without mutating Second Brain."
+      ]
+    },
+    {
+      "source": "Hapa Avatar Dashboard",
+      "target": "Character Sheet Rank Engine",
+      "layer": "DATA",
+      "label": "Load avatar dossiers and media metadata.",
+      "explanation": [
+        "Avatar Dashboard provides dossier OCR, profile text, image kinds, model counts, video counts, and updated timestamps.",
+        "Until direct use telemetry exists, these records are used as a proxy for which skills an avatar appears to embody or practice."
+      ]
+    },
+    {
+      "source": "Character Sheet Rank Engine",
+      "target": "Skill Quality Projection",
+      "layer": "DATA|API|CLI",
+      "label": "Compute relative skill quality.",
+      "explanation": [
+        "The engine normalizes each skill against the current roster and blends evidence power, source diversity, artifact output, raw score, capability reach, and node reach.",
+        "The output is a ranked list with quality score, quality band, component weights, family rollups, and formula version."
+      ]
+    },
+    {
+      "source": "Character Sheet Rank Engine",
+      "target": "Avatar Experience Projection",
+      "layer": "DATA|API|CLI",
+      "label": "Compute avatar experience with each skill.",
+      "explanation": [
+        "The engine matches avatar dossier text against skill labels, families, summaries, and related bodies, then scores each avatar-skill pair relative to that avatar and the global roster.",
+        "The result is explicitly marked as a proxy so later direct avatar-use telemetry can override it without losing the initial projection."
+      ]
+    },
+    {
+      "source": "Skill Quality Projection",
+      "target": "Hero Detail and Skill Codex",
+      "layer": "UI",
+      "label": "Render rank preview and quality/experience matrix.",
+      "explanation": [
+        "The Hero view gets a compact rank engine preview so a human can immediately see top quality and top avatar experience signals.",
+        "The Skill Codex gets a game-style matrix where skill quality is plotted against avatar experience, with clickable rows and dots that drive the selected skill."
+      ]
+    },
+    {
+      "source": "Refresh Protocol",
+      "target": "Skill Ranking Protocol",
+      "layer": "CLI|DATA",
+      "label": "Reassess rankings on every refresh.",
+      "explanation": [
+        "Each Character Sheet refresh rebuilds the ranking projection and records last_reassessed_at in generated data.",
+        "Future agents should inspect formula_version and last_reassessed_at before relying on rank claims in public, agent, or owner workflows."
+      ]
+    }
+  ],
+  "card": {
+    "verb": "ASSESS",
+    "type": "Capability Ranking",
+    "rank": "Rare",
+    "grade": "A",
+    "description": "Turns skill evidence and avatar dossiers into a continuously refreshed quality and experience matrix.",
+    "effect": "Humans can see which skills are most powerful; agents can route avatar-skill work using rank, experience, and method notes.",
+    "risk": "Avatar experience is proxy-based until direct use telemetry exists, so OCR-rich avatars can appear more experienced than quieter avatars.",
+    "stats": {
+      "impact": 8,
+      "reliability": 7,
+      "complexity": 7,
+      "cost": 3,
+      "speed": 8,
+      "teaching": 9
+    }
+  },
+  "record_rule": {
+    "second_brain": "Owns skill, evidence, capability, and node source truth.",
+    "avatar_dashboard": "Owns avatar source media and dossier text.",
+    "character_sheet": "Owns ranking projection, UI matrix, API/CLI surfaces, and formula version.",
+    "refresh_log": "Records refresh freshness.",
+    "overwatch_kanban": "Records formula, protocol, and UI/API/CLI implementation changes."
+  }
+}

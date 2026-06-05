@@ -1,0 +1,210 @@
+{
+  "id": "world.hapa.character-sheet",
+  "nodeId": "hapa-character-sheet",
+  "name": "Hapa Character Sheet",
+  "summary": "Professional resume, RPG character sheet, skill codex, portfolio brochure, media gallery, and lineage dossier over Hapa Second Brain.",
+  "status": "runtime_ready",
+  "contractVersion": "hapa-protocol-node-v1",
+  "visibilityDefault": "local_first",
+  "owner": "Calder/CJ local Hapa workspace",
+  "sourceTruth": [
+    "${HAPA_SECOND_BRAIN_DB}",
+    "${HAPA_WORLDBUILDING_WIKI_ROOT}",
+    "${HAPA_FRONT_DOOR_ROOT}/docs/HAPA_PROTOCOL_STANDARDS.md",
+    "${HAPA_OVERWATCH_KANBAN_ROOT}"
+  ],
+  "surfaces": {
+    "web": {
+      "defaultHost": "127.0.0.1",
+      "defaultPort": 8794,
+      "entry": "outputs/hapa-character-sheet-prototype.html"
+    },
+    "desktop": {
+      "shell": "electron",
+      "entry": "desktop/main.js",
+      "package": "desktop/package.json",
+      "appBundle": "desktop/Hapa Character Sheet.app",
+      "workspaceLauncher": "desktop/Launch Hapa Character Sheet.command",
+      "desktopLauncher": "desktop/Launch Hapa Character Sheet.command",
+      "runtimeVersion": "electron@42.3.3"
+    },
+    "api": {
+      "baseUrl": "http://127.0.0.1:8794",
+      "health": "/health",
+      "capabilities": "/capabilities"
+    },
+    "cli": {
+      "bin": "bin/hapa-character-sheet",
+      "jsonByDefault": true
+    }
+  },
+  "capabilities": [
+    {
+      "id": "resume_projection",
+      "label": "Resume Projection",
+      "ui": ["Resume"],
+      "api": ["/v1/character-sheets/{id}/resume"],
+      "cli": ["resume"],
+      "status": "implemented"
+    },
+    {
+      "id": "rpg_stat_sheet",
+      "label": "RPG Stat Sheet",
+      "ui": ["Sheet", "Stats"],
+      "api": ["/v1/character-sheets/{id}/stats"],
+      "cli": ["stats"],
+      "status": "implemented"
+    },
+    {
+      "id": "skill_codex",
+      "label": "Skill Codex",
+      "ui": ["Skills"],
+      "api": ["/v1/character-sheets/{id}/skills"],
+      "cli": ["skills", "skill"],
+      "status": "implemented"
+    },
+    {
+      "id": "skill_loop_showcase",
+      "label": "Skill Loop Showcase",
+      "ui": ["Skill Codex"],
+      "api": ["/v1/character-sheets/{id}", "/v1/character-sheets/{id}/portfolio"],
+      "cli": ["sheet", "portfolio", "agent-dossier"],
+      "status": "implemented"
+    },
+    {
+      "id": "skill_quality_avatar_experience",
+      "label": "Skill Quality and Avatar Experience Ranking",
+      "ui": ["Hero Detail", "Skill Codex", "Protocols"],
+      "api": ["/v1/character-sheets/{id}/skill-quality", "/v1/character-sheets/{id}", "/v1/character-sheets/{id}/agent-dossier"],
+      "cli": ["skill-quality", "sheet", "agent-dossier", "refresh"],
+      "status": "implemented"
+    },
+    {
+      "id": "lineage_dossier",
+      "label": "Lineage Dossier",
+      "ui": ["Lineage"],
+      "api": ["/v1/character-sheets/{id}/lineage"],
+      "cli": ["lineage"],
+      "status": "implemented"
+    },
+    {
+      "id": "agent_context_pack",
+      "label": "Agent Context Pack",
+      "ui": ["Agents"],
+      "api": ["/v1/character-sheets/{id}/agent-dossier"],
+      "cli": ["agent-dossier"],
+      "status": "implemented"
+    },
+    {
+      "id": "export_packet",
+      "label": "Export Packet",
+      "ui": ["Backstage", "Resume"],
+      "api": ["/v1/character-sheets/{id}/exports"],
+      "cli": ["export"],
+      "status": "implemented"
+    },
+    {
+      "id": "refresh_protocol",
+      "label": "Character Data Refresh Protocol",
+      "ui": ["Backstage", "Protocols"],
+      "api": ["/v1/character-sheets/{id}/refresh", "/health"],
+      "cli": ["refresh", "health", "smoke"],
+      "status": "implemented"
+    },
+    {
+      "id": "timeline_canon",
+      "label": "Timeline Canon",
+      "ui": ["Timeline", "Daily Timeline"],
+      "api": ["/v1/character-sheets/{id}/timeline"],
+      "cli": ["timeline"],
+      "status": "implemented"
+    },
+    {
+      "id": "character_profile_mining",
+      "label": "Character Profile and Lore Mining",
+      "ui": ["Profile", "Passport", "Agent Dossier", "Protocols"],
+      "api": ["/v1/character-sheets/{id}", "/v1/character-sheets/{id}/agent-dossier"],
+      "cli": ["sheet", "agent-dossier", "lineage", "timeline"],
+      "status": "implemented"
+    },
+    {
+      "id": "profile_background_video_loops",
+      "label": "Profile Background Video Loops",
+      "ui": ["Profile"],
+      "api": ["/v1/character-sheets/{id}", "/v1/character-sheets/{id}/portfolio"],
+      "cli": ["sheet", "portfolio", "agent-dossier"],
+      "status": "implemented"
+    },
+    {
+      "id": "media_gallery",
+      "label": "Media and Avatar Gallery",
+      "ui": ["Hero Detail", "Loadout", "Portfolio"],
+      "api": ["/v1/character-sheets/{id}/portfolio"],
+      "cli": ["portfolio"],
+      "status": "implemented"
+    },
+    {
+      "id": "second_brain_mini_console",
+      "label": "Second Brain Mini Console",
+      "ui": ["Hero Detail"],
+      "api": ["/v1/character-sheets/{id}", "/v1/character-sheets/{id}/timeline"],
+      "cli": ["sheet", "timeline", "agent-dossier"],
+      "status": "implemented"
+    },
+    {
+      "id": "standalone_desktop_shell",
+      "label": "Standalone Desktop Shell",
+      "ui": ["Desktop", "Hero Detail", "Profile", "Timeline"],
+      "api": ["/health", "/v1/character-sheets/{id}"],
+      "cli": ["serve", "smoke"],
+      "status": "implemented"
+    },
+    {
+      "id": "character_model_showcase",
+      "label": "Character Model Showcase",
+      "ui": ["Hero Detail"],
+      "api": ["/v1/character-sheets/{id}", "/v1/character-sheets/{id}/portfolio"],
+      "cli": ["sheet", "portfolio", "agent-dossier"],
+      "status": "implemented"
+    }
+  ],
+  "protocol": {
+    "recordRule": "Second Brain owns raw memory and derived evidence. Character Sheet owns curated presentation, redaction, stat snapshots, and exports. Overwatch owns board events. Wiki owns canonical protocol explanation after review.",
+    "kanbanProjectId": "hapa-app-hapa-character-sheet",
+    "kanbanUrl": "http://127.0.0.1:5181/?project=hapa-app-hapa-character-sheet",
+    "flowSidecar": "site/generated/protocol-flows/hapa-character-sheet-node.json",
+    "refreshProtocol": "outputs/HAPA_CHARACTER_SHEET_REFRESH_PROTOCOL.md",
+    "refreshFlowSidecar": "outputs/hapa-character-sheet.refresh-flow.json",
+    "refreshLog": "outputs/hapa-character-sheet.refresh-log.ndjson",
+    "skillRankingProtocol": "outputs/HAPA_CHARACTER_SHEET_SKILL_RANKING_PROTOCOL.md",
+    "skillRankingFlowSidecar": "outputs/hapa-character-sheet.skill-ranking-flow.json",
+    "dailyTimelineProtocol": "outputs/HAPA_CHARACTER_SHEET_DAILY_TIMELINE_PROTOCOL.md",
+    "dailyTimelineFlowSidecar": "outputs/hapa-character-sheet.daily-timeline-flow.json",
+    "characterProfileProtocol": "outputs/HAPA_CHARACTER_PROFILE_MINING_PROTOCOL.md",
+    "characterProfilePrompt": "outputs/HAPA_CHARACTER_PROFILE_MINING_PROMPT.md",
+    "characterProfileSchema": "outputs/hapa-character-profile.schema.json",
+    "characterProfileFoundation": "outputs/hapa-character-profile-calder-foundation.json",
+    "characterProfileRuns": "outputs/hapa-character-profile-calder-runs.json",
+    "characterProfileObservationLedger": "outputs/hapa-character-profile.observations.ndjson",
+    "characterProfileFlowSidecar": "outputs/hapa-character-profile-mining-flow.json"
+  },
+  "privacy": {
+    "tiers": ["public", "trusted", "agent", "owner"],
+    "defaultTier": "owner",
+    "publicRequiresPinnedClaims": true,
+    "rawSourceHistoryLocalOnly": true
+  },
+  "verification": {
+    "commands": [
+      "hapa-character-sheet health --deep",
+      "hapa-character-sheet capabilities",
+      "hapa-character-sheet smoke --dry-run",
+      "bin/hapa-character-sheet serve --host 127.0.0.1 --port 8794"
+    ],
+    "smokeShape": {
+      "ok": true,
+      "run_id": "run-id",
+      "steps_results": []
+    }
+  }
+}

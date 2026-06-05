@@ -1,0 +1,38 @@
+{
+  "profile_id": "calder",
+  "visibility_tiers": ["public", "trusted", "agent", "owner"],
+  "fixtures": [
+    {
+      "visibility": "public",
+      "expect": [
+        "local absolute paths redacted",
+        "raw turn arrays limited",
+        "resume claims and reviewed proof lanes visible"
+      ]
+    },
+    {
+      "visibility": "trusted",
+      "expect": [
+        "full projection shape visible",
+        "redaction manifest attached",
+        "owner-only source database remains controlled"
+      ]
+    },
+    {
+      "visibility": "agent",
+      "expect": [
+        "structured dossier visible",
+        "local absolute paths redacted",
+        "skills, capabilities, board state, and protocols available"
+      ]
+    },
+    {
+      "visibility": "owner",
+      "expect": [
+        "full local projection visible",
+        "source database and local paths preserved",
+        "exports include provenance manifest"
+      ]
+    }
+  ]
+}

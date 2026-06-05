@@ -1,0 +1,1132 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Hapa Character Sheet API",
+    "version": "0.1.0-design",
+    "summary": "Resume, RPG stat sheet, skill codex, media portfolio, lineage, and agent dossier projections over Hapa Second Brain."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8794",
+      "description": "Local loopback development server"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "Health response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/capabilities": {
+      "get": {
+        "operationId": "getCapabilities",
+        "summary": "Hapa protocol capabilities",
+        "responses": {
+          "200": {
+            "description": "Capability response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CapabilitiesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/character-sheets": {
+      "get": {
+        "operationId": "listCharacterSheets",
+        "summary": "List available character sheets",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Visibility"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "sheets": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CharacterSheetSummary"
+                      }
+                    }
+                  },
+                  "required": ["ok", "sheets"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/character-sheets/{sheet_id}": {
+      "get": {
+        "operationId": "getCharacterSheet",
+        "summary": "Get the complete character sheet projection",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SheetId"
+          },
+          {
+            "$ref": "#/components/parameters/Visibility"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Character sheet response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CharacterSheetResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/character-sheets/{sheet_id}/resume": {
+      "get": {
+        "operationId": "getResume",
+        "summary": "Get resume projection",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SheetId"
+          },
+          {
+            "$ref": "#/components/parameters/Visibility"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["json", "markdown"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resume response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResumeProjection"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/character-sheets/{sheet_id}/stats": {
+      "get": {
+        "operationId": "getStats",
+        "summary": "Get computed stat block",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SheetId"
+          },
+          {
+            "$ref": "#/components/parameters/Visibility"
+          },
+          {
+            "name": "explain",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stats response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "stats": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CharacterStat"
+                      }
+                    },
+                    "formula_version": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "stats", "formula_version"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/character-sheets/{sheet_id}/skills": {
+      "get": {
+        "operationId": "listSkills",
+        "summary": "List skill cards",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SheetId"
+          },
+          {
+            "$ref": "#/components/parameters/Visibility"
+          },
+          {
+            "name": "family",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "min_rank",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["D", "C", "B", "A", "S", "SS"]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "minimum": 1,
+              "maximum": 500
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Skills response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "skills": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SkillCard"
+                      }
+                    }
+                  },
+                  "required": ["ok", "skills"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/character-sheets/{sheet_id}/skills/{skill_id}/evidence": {
+      "get": {
+        "operationId": "getSkillEvidence",
+        "summary": "Get evidence for one skill",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SheetId"
+          },
+          {
+            "name": "skill_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Visibility"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 25,
+              "minimum": 1,
+              "maximum": 200
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Skill evidence response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillEvidenceResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/character-sheets/{sheet_id}/portfolio": {
+      "get": {
+        "operationId": "getPortfolio",
+        "summary": "Get pinned portfolio and media work",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SheetId"
+          },
+          {
+            "$ref": "#/components/parameters/Visibility"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Portfolio response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PortfolioItem"
+                      }
+                    }
+                  },
+                  "required": ["ok", "items"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/character-sheets/{sheet_id}/lineage": {
+      "get": {
+        "operationId": "getLineage",
+        "summary": "Get source to turn to result lineage",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SheetId"
+          },
+          {
+            "$ref": "#/components/parameters/Visibility"
+          },
+          {
+            "name": "skill",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "minimum": 1,
+              "maximum": 500
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lineage response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "links": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LineageLink"
+                      }
+                    }
+                  },
+                  "required": ["ok", "links"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/character-sheets/{sheet_id}/timeline": {
+      "get": {
+        "operationId": "getTimeline",
+        "summary": "Get historical lore and proof timeline",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SheetId"
+          },
+          {
+            "$ref": "#/components/parameters/Visibility"
+          },
+          {
+            "name": "layer",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["knowledge", "turns", "skills", "nodes", "capabilities"]
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scale",
+            "in": "query",
+            "description": "Timeline aggregation scale. Use day for the Daily canon view.",
+            "schema": {
+              "type": "string",
+              "enum": ["day", "week", "month", "year"],
+              "default": "month"
+            }
+          },
+          {
+            "name": "beat",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 80,
+              "minimum": 1,
+              "maximum": 500
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Timeline response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "scale": {
+                      "type": "string"
+                    },
+                    "summary": {
+                      "type": "object"
+                    },
+                    "daily_summary": {
+                      "type": "object"
+                    },
+                    "eras": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "layers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "series": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "beats": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  },
+                  "required": ["ok", "scale", "summary", "eras", "layers", "series", "beats"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/character-sheets/{sheet_id}/skill-quality": {
+      "get": {
+        "operationId": "getSkillQuality",
+        "summary": "Get skill quality and avatar experience rankings",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SheetId"
+          },
+          {
+            "$ref": "#/components/parameters/Visibility"
+          },
+          {
+            "name": "avatar",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skill",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "family",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 80,
+              "minimum": 1,
+              "maximum": 600
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Skill quality and avatar experience response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillQualityResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/character-sheets/{sheet_id}/agent-dossier": {
+      "get": {
+        "operationId": "getAgentDossier",
+        "summary": "Get agent-readable context pack",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SheetId"
+          },
+          {
+            "$ref": "#/components/parameters/Visibility"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agent dossier response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentDossier"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/character-sheets/{sheet_id}/refresh": {
+      "post": {
+        "operationId": "refreshSheet",
+        "summary": "Refresh character sheet projections",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SheetId"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Refresh report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/character-sheets/{sheet_id}/exports": {
+      "post": {
+        "operationId": "createExport",
+        "summary": "Create a resume, brochure, or dossier export",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SheetId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Export report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExportResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "SheetId": {
+        "name": "sheet_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Visibility": {
+        "name": "visibility",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "enum": ["public", "trusted", "agent", "owner"],
+          "default": "owner"
+        }
+      }
+    },
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "service": {
+            "type": "string"
+          },
+          "contract_version": {
+            "type": "string"
+          },
+          "sources": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": ["ok", "service", "contract_version"]
+      },
+      "CapabilitiesResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "required": ["ok", "capabilities"]
+      },
+      "CharacterSheetSummary": {
+        "type": "object",
+        "properties": {
+          "sheet_id": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "headline": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string"
+          }
+        },
+        "required": ["sheet_id", "display_name"]
+      },
+      "CharacterSheetResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "contract_version": {
+            "type": "string"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "redaction_mode": {
+            "type": "string"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/CharacterSheetSummary"
+          },
+          "stats": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CharacterStat"
+            }
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SkillCard"
+            }
+          },
+          "portfolio": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortfolioItem"
+            }
+          }
+        },
+        "required": ["ok", "contract_version", "generated_at", "profile"]
+      },
+      "ResumeProjection": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "claims": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "claim": {
+                  "type": "string"
+                },
+                "evidence_status": {
+                  "type": "string"
+                },
+                "source_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "markdown": {
+            "type": "string"
+          }
+        },
+        "required": ["ok", "summary"]
+      },
+      "CharacterStat": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 99
+          },
+          "rank": {
+            "type": "string",
+            "enum": ["D", "C", "B", "A", "S", "SS"]
+          },
+          "meaning": {
+            "type": "string"
+          },
+          "evidence_count": {
+            "type": "integer"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "explanation": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "label", "score", "rank"]
+      },
+      "SkillCard": {
+        "type": "object",
+        "properties": {
+          "skill_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "string"
+          },
+          "resume_claim": {
+            "type": "string"
+          },
+          "game_text": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          },
+          "evidence_count": {
+            "type": "integer"
+          },
+          "result_count": {
+            "type": "integer"
+          },
+          "privacy_level": {
+            "type": "string"
+          },
+          "evidence_status": {
+            "type": "string"
+          }
+        },
+        "required": ["skill_id", "title", "family", "rank"]
+      },
+      "SkillEvidenceResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "skill": {
+            "$ref": "#/components/schemas/SkillCard"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "turn_examples": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "required": ["ok", "skill", "evidence"]
+      },
+      "PortfolioItem": {
+        "type": "object",
+        "properties": {
+          "item_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "media": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "evidence_status": {
+            "type": "string"
+          }
+        },
+        "required": ["item_id", "title", "type"]
+      },
+      "LineageLink": {
+        "type": "object",
+        "properties": {
+          "link_id": {
+            "type": "string"
+          },
+          "source_type": {
+            "type": "string"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "target_type": {
+            "type": "string"
+          },
+          "target_id": {
+            "type": "string"
+          },
+          "relation_type": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number"
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "evidence_text": {
+            "type": "string"
+          }
+        },
+        "required": ["link_id", "source_type", "source_id", "target_type", "target_id"]
+      },
+      "SkillQualityResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "summary": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "formula_version": {
+            "type": "string"
+          },
+          "method": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "family_summary": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "avatars": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "skill_quality": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "avatar_skill_experience": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "visibility": {
+            "type": "string"
+          }
+        },
+        "required": ["ok", "summary", "skill_quality", "avatar_skill_experience"]
+      },
+      "AgentDossier": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "sheet_id": {
+            "type": "string"
+          },
+          "redaction_mode": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "top_skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SkillCard"
+            }
+          },
+          "protocols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "safe_next_actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["ok", "sheet_id", "summary"]
+      },
+      "RefreshRequest": {
+        "type": "object",
+        "properties": {
+          "dry_run": {
+            "type": "boolean",
+            "default": true
+          },
+          "include_heavy": {
+            "type": "boolean",
+            "default": false
+          },
+          "source": {
+            "type": "string",
+            "enum": ["second_brain", "manual", "all"],
+            "default": "second_brain"
+          }
+        }
+      },
+      "RunReport": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "run_id": {
+            "type": "string"
+          },
+          "steps_results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["ok", "run_id", "steps_results"]
+      },
+      "ExportRequest": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "type": "string",
+            "enum": ["markdown", "json", "html", "pdf"]
+          },
+          "visibility": {
+            "type": "string",
+            "enum": ["public", "trusted", "agent", "owner"],
+            "default": "public"
+          },
+          "dry_run": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": ["format"]
+      },
+      "ExportResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "export_id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "manifest": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": ["ok", "export_id"]
+      }
+    }
+  }
+}

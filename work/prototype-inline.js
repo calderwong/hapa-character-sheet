@@ -1,0 +1,1704 @@
+
+    const DATA = window.HAPA_CHARACTER_SHEET_DATA;
+    const state = {
+      view: window.location.hash.includes("presentation") ? "presentation" : "data",
+      gamePanel: (() => {
+        const route = window.location.hash.split("&")[0];
+        return route.includes("codex") ? "codex" : route.includes("proof") ? "proof" : route.includes("loadout") ? "loadout" : route.includes("timeline") ? "timeline" : route.includes("passport") ? "passport" : "hero";
+      })(),
+      passportFocus: (() => {
+        const match = decodeURIComponent(window.location.hash).match(/focus=([^&]+)/);
+        return match ? match[1] : "metric:evidence";
+      })(),
+      codexFamily: (() => {
+        const match = decodeURIComponent(window.location.hash).match(/family=([^&]+)/);
+        return match ? match[1] : (DATA.skill_families[0]?.label || "");
+      })(),
+      codexCapabilityId: (() => {
+        const match = decodeURIComponent(window.location.hash).match(/cap=([^&]+)/);
+        return match ? match[1] : "";
+      })(),
+      proofFocus: (() => {
+        const match = decodeURIComponent(window.location.hash).match(/proof=([^&]+)/);
+        return match ? match[1] : "skills";
+      })(),
+      loadoutNodeId: (() => {
+        const match = decodeURIComponent(window.location.hash).match(/node=([^&]+)/);
+        return match ? match[1] : (DATA.nodes[0]?.node_id || "");
+      })(),
+      loadoutType: (() => {
+        const match = decodeURIComponent(window.location.hash).match(/loadoutType=([^&]+)/);
+        return match ? match[1] : "all";
+      })(),
+      timelineLayer: (() => {
+        const match = decodeURIComponent(window.location.hash).match(/layer=([^&]+)/);
+        return match ? match[1] : "all";
+      })(),
+      timelineEra: (() => {
+        const match = decodeURIComponent(window.location.hash).match(/era=([^&]+)/);
+        return match ? match[1] : "all";
+      })(),
+      timelineBeatId: (() => {
+        const match = decodeURIComponent(window.location.hash).match(/beat=([^&]+)/);
+        return match ? match[1] : "";
+      })(),
+      imageSrc: localStorage.getItem("hapaCharacterSheetImageSrc") || DATA.image_sources?.default_url || "hapa-character-sheet-game-mock-04-mobile-passport.png",
+      imageLabel: localStorage.getItem("hapaCharacterSheetImageLabel") || "Mobile Passport Mock",
+      imageFilter: localStorage.getItem("hapaCharacterSheetImageFilter") || "avatar",
+      sound: localStorage.getItem("hapaCharacterSheetSfx") === "on",
+      panel: "sheet",
+      q: "",
+      family: "all",
+      rank: "all",
+      type: "all",
+      mode: "all",
+      sort: "evidence",
+      level: "signal",
+      limit: 120
+    };
+    const panelInfo = {
+      sheet: ["Character Sheet", "Compressed operator stats, resume signals, source mix, and live Hapa scope."],
+      resume: ["Resume", "Professional brochure view with outcomes, proof lanes, and portfolio-ready claims."],
+      skills: ["Skills", "The skill inventory ranked like a game sheet, with evidence and source lineage."],
+      nodes: ["Nodes", "Hapa nodes as portfolio artifacts, tools, workflows, and operating surfaces."],
+      capabilities: ["Capabilities", "Using and enhancing skills for each node, bridged to general skills and practice signals."],
+      lineage: ["Lineage", "AI turns and learning links connecting exposure, practice, result, and reusable wisdom."],
+      sources: ["Sources", "Material consumed, source systems, media types, topics, and knowledge bodies."],
+      media: ["Media", "Generated and queued visual assets for cards, nodes, avatars, protocols, and results."],
+      agents: ["Agents", "Avatars, agents, harnesses, and capability profiles available to operate the sheet."],
+      protocols: ["Protocols", "Hapa protocol docs, wiki protocol articles, API, CLI, manifests, and flow contracts."],
+      board: ["Board", "Kanban state for turning this prototype into a standard Hapa happ."]
+    };
+    const gamePanelInfo = {
+      hero: ["Hero Detail", "A high-production public character screen for quick human understanding."],
+      codex: ["Skill Codex", "Skills as job classes, capabilities as unlocks, nodes as equipment, evidence as XP."],
+      proof: ["Proof Map", "A visual constellation connecting sources, turns, skills, nodes, capabilities, media, agents, and protocols."],
+      loadout: ["Loadout", "Portfolio nodes, agent companions, protocol runes, and media artifacts as usable inventory."],
+      timeline: ["Timeline", "A historical lore/canon rail for knowledge acquired, AI turns, skills, capabilities, and Hapa nodes."],
+      passport: ["Passport", "A compact mobile-first character card for quick sharing."]
+    };
+    const navIcons = {
+      sheet: "CS",
+      resume: "CV",
+      skills: "SK",
+      nodes: "ND",
+      capabilities: "CP",
+      lineage: "LN",
+      sources: "SR",
+      media: "MD",
+      agents: "AG",
+      protocols: "PR",
+      board: "KB"
+    };
+    const countByPanel = {
+      sheet: DATA.summary.total_records,
+      resume: DATA.nodes.length + DATA.skills.length,
+      skills: DATA.skills.length,
+      nodes: DATA.nodes.length,
+      capabilities: DATA.capabilities.length,
+      lineage: DATA.turns.length,
+      sources: DATA.topics.length,
+      media: DATA.media.length,
+      agents: DATA.agents.length,
+      protocols: DATA.protocols.length + DATA.docs.length,
+      board: DATA.board.tasks.length
+    };
+    const el = (tag, cls, html) => {
+      const node = document.createElement(tag);
+      if (cls) node.className = cls;
+      if (html !== undefined) node.innerHTML = html;
+      return node;
+    };
+    const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+    const fmt = (value) => Number(value || 0).toLocaleString();
+    const pct = (value) => `${Math.max(1, Math.min(100, Number(value || 0)))}%`;
+    const NODE_SCORE_MAX = Math.max(1, ...DATA.nodes.map((node) => Number(node.score || 0)));
+    const textOf = (item) => Object.values(item || {}).filter((value) => typeof value === "string" || typeof value === "number").join(" ").toLowerCase();
+    const queryMatch = (item) => !state.q || textOf(item).includes(state.q.toLowerCase());
+    const rankClass = (rank) => String(rank || "").toLowerCase().replace(/[^a-z]/g, "");
+    const badge = (text, cls = "") => `<span class="badge ${cls}">${esc(text)}</span>`;
+    const chips = (items, cls = "") => (items || []).filter(Boolean).slice(0, 8).map((item) => badge(item, cls)).join("");
+    const proofVisible = () => state.level === "proof" || state.level === "raw";
+    const rawVisible = () => state.level === "raw";
+    let audioCtx = null;
+    let lastHoverTarget = null;
+    let lastHoverTone = 0;
+    function audioContext() {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return null;
+      if (!audioCtx) audioCtx = new Ctx();
+      return audioCtx;
+    }
+    function playTone(kind = "click") {
+      if (!state.sound) return;
+      const ctx = audioContext();
+      if (!ctx) return;
+      const profiles = {
+        hover: [620, 0.026, "sine", 0.018],
+        click: [420, 0.04, "triangle", 0.026],
+        select: [760, 0.055, "sine", 0.03],
+        change: [540, 0.05, "triangle", 0.024],
+        toggle: [880, 0.07, "sine", 0.034]
+      };
+      const [freq, duration, wave, volume] = profiles[kind] || profiles.click;
+      try {
+        if (ctx.state === "suspended") ctx.resume();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = wave;
+        osc.frequency.setValueAtTime(freq, now);
+        if (kind === "select" || kind === "toggle") osc.frequency.exponentialRampToValueAtTime(freq * 1.36, now + duration);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(volume, now + 0.008);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + duration + 0.012);
+      } catch (err) {
+        state.sound = false;
+        localStorage.setItem("hapaCharacterSheetSfx", "off");
+      }
+    }
+    const gameMocks = [
+      ["Hero Detail", "hapa-character-sheet-game-mock-01-hero-detail.png"],
+      ["Proof Map", "hapa-character-sheet-game-mock-02-proof-constellation.png"],
+      ["Skill Codex", "hapa-character-sheet-game-mock-03-skill-codex.png"],
+      ["Mobile Passport", "hapa-character-sheet-game-mock-04-mobile-passport.png"]
+    ];
+    function sortItems(items) {
+      const key = state.sort;
+      return [...items].sort((a, b) => {
+        if (key === "name") return String(a.label || a.title || "").localeCompare(String(b.label || b.title || ""));
+        if (key === "updated") return String(b.updated_at || b.turn_started_at || b.ts || "").localeCompare(String(a.updated_at || a.turn_started_at || a.ts || ""));
+        const map = { evidence: "evidence_count", score: "score", source: "source_count", artifact: "artifact_count" };
+        const prop = map[key] || "score";
+        return Number(b[prop] || 0) - Number(a[prop] || 0);
+      });
+    }
+    function limited(items) {
+      return sortItems(items).slice(0, state.limit);
+    }
+    function section(title, subtitle, body) {
+      return `<section class="section"><div class="section-head"><div><div class="section-kicker">${esc(subtitle || "Layer")}</div><h3>${esc(title)}</h3></div></div>${body}</section>`;
+    }
+    function record(title, meta, description, badges, extra = "") {
+      return `<article class="record">
+        <div class="record-title"><strong>${esc(title)}</strong><div>${badges || ""}</div></div>
+        ${meta ? `<div class="record-meta">${esc(meta)}</div>` : ""}
+        ${description ? `<p>${esc(description)}</p>` : ""}
+        ${extra}
+      </article>`;
+    }
+    function meter(label, value, detail) {
+      return `<div class="meter">
+        <div class="meter-top"><span class="meter-label">${esc(label)}</span><span class="meter-label">${fmt(value)}</span></div>
+        <div class="bar"><div class="fill" style="--value:${pct(value)}"></div></div>
+        ${detail ? `<div class="record-meta">${esc(detail)}</div>` : ""}
+      </div>`;
+    }
+    function showMore(total) {
+      if (total <= state.limit) return "";
+      return `<button class="show-more" type="button" data-show-more="1">Show more - ${fmt(Math.min(total - state.limit, 120))} of ${fmt(total - state.limit)} remaining</button>`;
+    }
+    function modeSwitch() {
+      return `<div class="mode-switch" aria-label="View mode">
+        <button type="button" data-view="data" class="${state.view === "data" ? "active" : ""}">Data View</button>
+        <button type="button" data-view="presentation" class="${state.view === "presentation" ? "active" : ""}">Presentation</button>
+      </div>`;
+    }
+    function soundButton() {
+      return `<button type="button" class="sound-toggle ${state.sound ? "active" : ""}" data-sound-toggle aria-pressed="${state.sound ? "true" : "false"}">${state.sound ? "SFX On" : "SFX Off"}</button>`;
+    }
+    function setHeader() {
+      const [title, copy] = state.view === "presentation" ? gamePanelInfo[state.gamePanel] : panelInfo[state.panel];
+      document.getElementById("route-title").textContent = title;
+      document.getElementById("route-copy").textContent = copy;
+      document.getElementById("route-kicker").textContent = state.view === "presentation" ? `${DATA.profile.handle} / Character Mode` : `${DATA.profile.handle} / Admin Data / ${state.level}`;
+      document.getElementById("status-row").innerHTML = [
+        modeSwitch(),
+        soundButton(),
+        `<span class="chip green"><span class="dot"></span>${esc(DATA.summary.generated_label)}</span>`,
+        `<span class="chip cyan">${fmt(DATA.summary.items)} items</span>`,
+        `<span class="chip pink">${fmt(DATA.summary.skills)} skills</span>`,
+        `<span class="chip gold">${fmt(DATA.summary.turns)} turns</span>`
+      ].join("");
+    }
+    function renderNav() {
+      const nav = document.getElementById("nav");
+      nav.innerHTML = Object.keys(panelInfo).map((key) => `<button class="nav-button ${state.panel === key ? "active" : ""}" type="button" data-panel="${key}">
+        <span class="nav-icon">${navIcons[key]}</span>
+        <span class="nav-title">${panelInfo[key][0]}</span>
+        <span class="nav-meta">${fmt(countByPanel[key])}</span>
+      </button>`).join("");
+    }
+    function renderSideStats() {
+      const stats = [
+        ["Evidence", DATA.summary.skill_evidence],
+        ["Edges", DATA.summary.edges],
+        ["Media", DATA.summary.media_jobs],
+        ["Topics", DATA.summary.topics]
+      ];
+      document.getElementById("side-stats").innerHTML = stats.map(([label, value]) => `<div class="mini-stat"><strong>${fmt(value)}</strong><span>${esc(label)}</span></div>`).join("");
+      document.getElementById("brand-copy").textContent = `${fmt(DATA.summary.skills)} skills, ${fmt(DATA.summary.nodes)} nodes, ${fmt(DATA.summary.turns)} turns, ${fmt(DATA.summary.media_jobs)} media jobs, and ${fmt(DATA.summary.topics)} topic profiles compressed into a public-facing dossier.`;
+    }
+    function fillOptions() {
+      const family = document.getElementById("family-filter");
+      const families = [...new Set(DATA.skills.map((item) => item.skill_family).filter(Boolean))].sort();
+      family.innerHTML = `<option value="all">All families</option>` + families.map((value) => `<option value="${esc(value)}">${esc(value.replaceAll("_", " "))}</option>`).join("");
+      const type = document.getElementById("type-filter");
+      const types = [...new Set([...DATA.nodes.map((item) => item.node_type), ...DATA.media.map((item) => item.status), ...DATA.protocols.map((item) => item.article_type)].filter(Boolean))].sort();
+      type.innerHTML = `<option value="all">All types</option>` + types.map((value) => `<option value="${esc(value)}">${esc(value.replaceAll("_", " "))}</option>`).join("");
+      const mode = document.getElementById("mode-filter");
+      const modes = [...new Set(DATA.capabilities.map((item) => item.mode).filter(Boolean))].sort();
+      mode.innerHTML = `<option value="all">All modes</option>` + modes.map((value) => `<option value="${esc(value)}">${esc(value)}</option>`).join("");
+    }
+    function statsGrid(cards) {
+      return `<div class="grid cols-4">${cards.map(([value, label, detail]) => `<div class="stat-card"><strong>${esc(value)}</strong><span>${esc(label)}</span>${detail ? `<div class="record-meta">${esc(detail)}</div>` : ""}</div>`).join("")}</div>`;
+    }
+    function renderSheet() {
+      const statMeters = DATA.stats.map((stat) => `<div class="card">${meter(stat.label, stat.value, stat.detail)}<div class="tag-row">${chips(stat.top_skills, "cyan")}</div></div>`).join("");
+      const families = DATA.skill_families.slice(0, 18).map((family) => record(family.label.replaceAll("_", " "), `${fmt(family.skill_count)} skills / ${fmt(family.evidence_count)} evidence`, family.top_skill || "", badge(family.rank, "gold"))).join("");
+      const claimCards = DATA.resume.claims.map((claim) => record(claim.title, claim.meta, claim.body, chips(claim.proof, "cyan"))).join("");
+      return `<section class="hero">
+        <div class="section-kicker">Professional RPG dossier</div>
+        <h3>${esc(DATA.profile.name)}</h3>
+        <p>${esc(DATA.profile.summary)}</p>
+        <div class="hero-strip">
+          ${badge(`${fmt(DATA.summary.items)} source items`, "cyan")}
+          ${badge(`${fmt(DATA.summary.skill_evidence)} skill evidence links`, "gold")}
+          ${badge(`${fmt(DATA.summary.capability_bridges)} capability bridges`, "pink")}
+          ${badge(`${fmt(DATA.summary.board_tasks)} board cards`, "green")}
+        </div>
+      </section>
+      ${section("Core Stats", "Game sheet compression", `<div class="grid cols-4">${statMeters}</div>`)}
+      ${section("Resume Signals", "Public proof layer", `<div class="grid cols-3">${claimCards}</div>`)}
+      ${section("Dominant Skill Families", "Abstraction layer", `<div class="grid cols-3">${families}</div>`)}
+      ${section("Portfolio Lanes", "Node result mix", statsGrid(DATA.node_type_summary.slice(0, 8).map((item) => [fmt(item.count), item.label.replaceAll("_", " "), `${fmt(item.topic_count)} topics / ${fmt(item.card_count)} cards`])) )}`;
+    }
+    function renderResume() {
+      const impact = DATA.resume.outcomes.map((item) => record(item.title, item.meta, item.body, chips(item.tags, "gold"))).join("");
+      const nodes = DATA.nodes.filter(queryMatch).slice(0, 9).map((item) => record(item.label, `${item.node_type} / score ${fmt(item.score)}`, item.description, `${badge(`${fmt(item.topic_count)} topics`, "cyan")}${badge(`${fmt(item.card_count)} cards`, "pink")}`)).join("");
+      const proof = DATA.resume.proof_lanes.map((lane) => `<div class="card"><h4>${esc(lane.label)}</h4><p>${esc(lane.body)}</p><div class="tag-row">${chips(lane.metrics, "green")}</div></div>`).join("");
+      return `${section("Professional Summary", "Brochure view", `<div class="grid cols-2"><div class="card"><h4>${esc(DATA.profile.title)}</h4><p>${esc(DATA.profile.resume_summary)}</p><div class="tag-row">${chips(DATA.profile.roles, "cyan")}</div></div><div class="card avatar-line"></div></div>`)}
+      ${section("Outcome Claims", "Resume bullets with lineage", `<div class="grid cols-3">${impact}</div>`)}
+      ${section("Proof Lanes", "What backs the claim", `<div class="grid cols-3">${proof}</div>`)}
+      ${section("Representative Portfolio Nodes", "Result artifacts", `<div class="grid cols-3">${nodes}</div>`)}`;
+    }
+    function renderSkills() {
+      let items = DATA.skills.filter(queryMatch);
+      if (state.family !== "all") items = items.filter((item) => item.skill_family === state.family);
+      if (state.rank !== "all") items = items.filter((item) => item.rank === state.rank);
+      const visible = limited(items);
+      const body = visible.map((item) => {
+        const extra = [
+          `<div class="tag-row">${chips([item.skill_family, `${fmt(item.source_count)} sources`, `${fmt(item.artifact_count)} artifacts`], "cyan")}</div>`,
+          proofVisible() ? `<p>${esc(item.summary || "Evidence-backed skill projection.")}</p>` : "",
+          proofVisible() && item.related_bodies.length ? `<div class="tag-row">${chips(item.related_bodies, "pink")}</div>` : "",
+          rawVisible() ? `<div class="record-meta">${esc(item.skill_id)} / updated ${esc(item.updated_at || "")}</div>` : ""
+        ].join("");
+        return record(item.label, `${fmt(item.evidence_count)} evidence links / ${fmt(item.source_count)} sources`, "", `<span class="rank ${rankClass(item.rank)}">${esc(item.rank)}</span>`, extra);
+      }).join("");
+      return section("Skill Codex", `Showing ${fmt(visible.length)} of ${fmt(items.length)} filtered / ${fmt(DATA.skills.length)} total`, `<div class="grid cols-3">${body || `<div class="empty">No skills match the current filters.</div>`}</div>${showMore(items.length)}`);
+    }
+    function renderNodes() {
+      let items = DATA.nodes.filter(queryMatch);
+      if (state.type !== "all") items = items.filter((item) => item.node_type === state.type);
+      const visible = limited(items);
+      const body = visible.map((item) => {
+        const extra = [
+          `<div class="tag-row">${chips([item.node_type, `${fmt(item.topic_count)} topics`, `${fmt(item.body_count)} bodies`, `${fmt(item.card_count)} cards`], "cyan")}</div>`,
+          rawVisible() ? `<div class="source-link">${esc(item.source_path || item.node_id)}</div>` : ""
+        ].join("");
+        return record(item.label, `Score ${fmt(item.score)}`, item.description, badge(item.node_type, "gold"), extra);
+      }).join("");
+      return section("Node Portfolio", `Showing ${fmt(visible.length)} of ${fmt(items.length)} filtered / ${fmt(DATA.nodes.length)} total`, `<div class="grid cols-3">${body || `<div class="empty">No nodes match the current filters.</div>`}</div>${showMore(items.length)}`);
+    }
+    function renderCapabilities() {
+      let items = DATA.capabilities.filter(queryMatch);
+      if (state.family !== "all") items = items.filter((item) => item.skill_family === state.family);
+      if (state.mode !== "all") items = items.filter((item) => item.mode === state.mode);
+      const visible = limited(items);
+      const body = visible.map((item) => {
+        const extra = [
+          `<div class="tag-row">${chips([item.mode, item.skill_family, item.node_label], "pink")}</div>`,
+          proofVisible() && item.practice_steps.length ? `<p>Practice: ${esc(item.practice_steps.join(" / "))}</p>` : "",
+          proofVisible() && item.success_signals.length ? `<div class="tag-row">${chips(item.success_signals, "green")}</div>` : "",
+          rawVisible() ? `<div class="record-meta">${esc(item.node_skill_id)} / ${fmt(item.link_count)} bridges / best ${fmt(item.best_link_score)}</div>` : ""
+        ].join("");
+        return record(item.label, `${item.node_label} / ${fmt(item.topic_count)} topics / ${fmt(item.card_count)} cards`, item.description, badge(item.mode, item.mode === "using" ? "cyan" : "gold"), extra);
+      }).join("");
+      return section("Capability Library", `Showing ${fmt(visible.length)} of ${fmt(items.length)} filtered / ${fmt(DATA.capabilities.length)} total`, `<div class="grid cols-2">${body || `<div class="empty">No capabilities match the current filters.</div>`}</div>${showMore(items.length)}`);
+    }
+    function renderLineage() {
+      let turns = DATA.turns.filter(queryMatch);
+      const visibleTurns = sortItems(turns).slice(0, Math.min(state.limit, 160));
+      const turnCards = visibleTurns.map((item) => {
+        const extra = [
+          `<div class="tag-row">${chips([item.platform, item.turn_type, `${fmt(item.learning_link_count)} learning`, `${fmt(item.result_link_count)} results`], "cyan")}</div>`,
+          proofVisible() ? `<p>${esc(item.user_excerpt || item.model_response_summary || "")}</p>` : "",
+          rawVisible() ? `<div class="record-meta">${esc(item.turn_id)} / ${esc(item.thread_title || "")}</div>` : ""
+        ].join("");
+        return record(item.objective || item.thread_title || item.turn_id, `${item.turn_started_at || "undated"} / relevance ${fmt(item.hapa_relevance_score)}`, item.model_response_summary, badge(item.platform || "turn", "gold"), extra);
+      }).join("");
+      let links = DATA.learning_links.filter(queryMatch).slice(0, 80);
+      const linkCards = links.map((item) => record(item.source_title || item.skill_label || item.article_title || item.link_id, `${item.source_type} / ${item.source_system || item.platform || ""} / score ${fmt(item.score)}`, item.evidence_text, chips([item.skill_label, item.body_label, item.article_title], "pink"), rawVisible() ? `<div class="record-meta">${esc(item.link_id)} / turn ${esc(item.turn_id)}</div>` : "")).join("");
+      return `${section("Turns To Results", `Showing ${fmt(visibleTurns.length)} of ${fmt(turns.length)} filtered / ${fmt(DATA.turns.length)} total`, `<div class="grid cols-2">${turnCards || `<div class="empty">No turns match the current filters.</div>`}</div>${showMore(turns.length)}`)}
+      ${section("Learning Evidence Links", `Top ${fmt(links.length)} evidence links from indexed lineage`, `<div class="grid cols-2">${linkCards || `<div class="empty">No learning links match the current filters.</div>`}</div>`)}`;
+    }
+    function renderSources() {
+      let topics = DATA.topics.filter(queryMatch);
+      const visibleTopics = topics.slice(0, Math.min(state.limit, 180));
+      const sourceCards = DATA.source_systems.slice(0, 18).map((item) => record(item.source_system || "unknown", `${fmt(item.items)} items / ${fmt(item.exposures)} exposures`, `${fmt(item.owned)} owned records`, badge(item.mediums || "source", "cyan"))).join("");
+      const mediumCards = DATA.mediums.slice(0, 16).map((item) => record(item.medium || "unknown", `${fmt(item.items)} items`, `${fmt(item.exposures)} exposures`, badge("medium", "gold"))).join("");
+      const topicCards = visibleTopics.map((item) => record(item.label, `${item.topic_type} / ${fmt(item.evidence_count)} evidence / ${fmt(item.skill_count)} skills`, item.definition || item.scope_note, chips([item.topic_type, `${fmt(item.item_count)} items`], "green"), rawVisible() ? `<div class="record-meta">${esc(item.topic_id)}</div>` : "")).join("");
+      return `${section("Source Systems", "Material and import origins", `<div class="grid cols-3">${sourceCards}</div>`)}
+      ${section("Media Types", "Consumption layer", `<div class="grid cols-4">${mediumCards}</div>`)}
+      ${section("Topic Profiles", `Showing ${fmt(visibleTopics.length)} of ${fmt(topics.length)} filtered / ${fmt(DATA.topics.length)} total`, `<div class="grid cols-3">${topicCards || `<div class="empty">No topics match the current filters.</div>`}</div>${showMore(topics.length)}`)}`;
+    }
+    function renderMedia() {
+      let items = DATA.media.filter(queryMatch);
+      if (state.type !== "all") items = items.filter((item) => item.status === state.type || item.media_type === state.type || item.target_type === state.type);
+      const visible = limited(items);
+      const body = visible.map((item) => {
+        const image = item.preview_path ? `<img src="${esc(item.preview_path)}" alt="">` : "";
+        const content = record(item.target_label || item.visual_label || item.job_id, `${item.status} / ${item.provider} / ${item.media_type}`, item.prompt_text || item.direction_prompt || "", chips([item.asset_role, item.target_type, item.node_label, item.turn_skill_family], "pink"), rawVisible() ? `<div class="record-meta">${esc(item.job_id)} / ${esc(item.output_local_path || item.image_url || "")}</div>` : "");
+        return `<article class="media-card">${image}${content}</article>`;
+      }).join("");
+      return section("Media Registry", `Showing ${fmt(visible.length)} of ${fmt(items.length)} filtered / ${fmt(DATA.media.length)} total`, `<div class="media-grid">${body || `<div class="empty">No media jobs match the current filters.</div>`}</div>${showMore(items.length)}`);
+    }
+    function renderAgents() {
+      const body = DATA.agents.filter(queryMatch).map((item) => {
+        const extra = [
+          `<div class="tag-row">${chips([item.agent_kind, item.status, item.provider, item.model_profile], "cyan")}</div>`,
+          proofVisible() ? `<p>${esc(item.description || item.role_summary || "")}</p>` : "",
+          rawVisible() ? `<div class="record-meta">${esc(item.agent_id)} / ${fmt(item.local_skill_count)} local skills / ${fmt(item.master_skill_count)} master skills / ${fmt(item.harness_count)} harnesses</div>` : ""
+        ].join("");
+        return record(item.label, `Score ${fmt(item.score)}`, item.role_summary, badge(`${fmt(item.local_skill_count)} local`, "gold"), extra);
+      }).join("");
+      return `${section("Agent And Avatar Profiles", "Operating roster", `<div class="grid cols-3">${body || `<div class="empty">No agents match the current filters.</div>`}</div>`)}
+      ${section("Harness Context", "Runtime affordances", `<div class="grid cols-3">${DATA.harnesses.map((item) => record(item.label, item.harness_kind || "harness", item.description || item.role_summary || "", chips([item.status, item.provider, item.model_profile], "pink"))).join("") || `<div class="empty">No harness profiles indexed.</div>`}</div>`)}`;
+    }
+    function renderProtocols() {
+      let protocols = DATA.protocols.filter(queryMatch);
+      if (state.type !== "all") protocols = protocols.filter((item) => item.article_type === state.type);
+      const wiki = protocols.map((item) => record(item.title, `${item.article_type} / updated ${item.updated_at || ""}`, item.summary, badge("wiki", "cyan"), rawVisible() ? `<div class="record-meta">${esc(item.slug)}</div>` : "")).join("");
+      const docs = DATA.docs.filter(queryMatch).map((item) => record(item.title, item.kind, item.summary, badge("doc", "gold"), rawVisible() ? `<div class="source-link">${esc(item.path)}</div>` : "")).join("");
+      const contracts = DATA.contracts.map((item) => record(item.title, item.kind, item.summary, chips(item.files, "green"))).join("");
+      return `${section("Protocol Articles", `Showing ${fmt(protocols.length)} of ${fmt(DATA.protocols.length)} protocol/wiki records`, `<div class="grid cols-2">${wiki || `<div class="empty">No protocol articles match the filters.</div>`}</div>`)}
+      ${section("Documentation Spine", "Environment and happ standards", `<div class="grid cols-2">${docs}</div>`)}
+      ${section("Happ Contracts", "UI, CLI, API, desktop, web", `<div class="grid cols-3">${contracts}</div>`)}
+      ${section("Protocol Visuals", "Media proof cards", `<div class="grid cols-2"><div class="card protocol-line"></div><div class="card avatar-line"></div></div>`)}`;
+    }
+    function renderBoard() {
+      const laneCards = DATA.board.columns.map((item) => record(item.label, `${fmt(item.count)} tasks`, item.description || "", badge(item.label, item.label === "done" ? "green" : item.label === "blocked" ? "rose" : "cyan"))).join("");
+      let tasks = DATA.board.tasks.filter(queryMatch);
+      if (state.type !== "all") tasks = tasks.filter((item) => item.column === state.type || item.lane === state.type || item.priority === state.type);
+      const visible = tasks.slice(0, Math.min(state.limit, 200));
+      const taskCards = visible.map((item) => record(item.title, `${item.column} / ${item.lane} / ${item.priority}`, item.description, chips([item.owner, item.node, ...(item.tags || [])], "cyan"), proofVisible() ? `<div class="tag-row">${chips(item.acceptance, "green")}</div>` : "")).join("");
+      const eventCards = DATA.board.events.slice(0, 24).map((item) => record(item.payload_title || item.type, `${item.ts} / ${item.actor}`, item.payload_body || item.task_id || "", badge(item.type, "gold"))).join("");
+      return `${section("Board Columns", "Quest state", `<div class="grid cols-4">${laneCards}</div>`)}
+      ${section("Task Cards", `Showing ${fmt(visible.length)} of ${fmt(tasks.length)} filtered / ${fmt(DATA.board.tasks.length)} total`, `<div class="grid cols-2">${taskCards || `<div class="empty">No board cards match the current filters.</div>`}</div>${showMore(tasks.length)}`)}
+      ${section("Append-Only Events", "Protocol record", `<div class="grid cols-2">${eventCards}</div>`)}`;
+    }
+    function gameTabs() {
+      return `<nav class="game-tabs">${Object.entries(gamePanelInfo).map(([key, info]) => `<button type="button" data-game-panel="${key}" class="${state.gamePanel === key ? "active" : ""}">${esc(info[0])}</button>`).join("")}</nav>`;
+    }
+    function mockGallery() {
+      return `<div class="mock-gallery">${gameMocks.map(([label, path]) => `<img src="${esc(path)}" alt="${esc(label)} mock">`).join("")}</div>`;
+    }
+    function dataAttrs(attrs) {
+      return Object.entries(attrs || {}).filter(([, value]) => value !== undefined && value !== null && value !== "").map(([key, value]) => ` ${key}="${esc(value)}"`).join("");
+    }
+    function cleanImageUrl(value) {
+      return String(value || DATA.image_sources?.default_url || "hapa-character-sheet-game-mock-04-mobile-passport.png").replace(/["\\\n\r]/g, "");
+    }
+    function cssImageValue(value) {
+      return `url("${cleanImageUrl(value)}")`;
+    }
+    function cssImageStyleVar(name, value) {
+      return `${name}:${cssImageValue(value)};`;
+    }
+    function imageSourceLabel(kind) {
+      return {
+        avatar: "Avatars",
+        asset_viewer: "Asset Mgr",
+        media_registry: "Media",
+        character_sheet: "Sheet"
+      }[kind] || kind;
+    }
+    function selectedImageSource() {
+      return (DATA.image_sources?.items || []).find((item) => item.url === state.imageSrc) || { label: state.imageLabel, source_app: "Custom", kind: "custom", url: state.imageSrc, meta: "local selection" };
+    }
+    function applyCharacterImage() {
+      document.documentElement.style.setProperty("--selected-character-image", cssImageValue(state.imageSrc));
+    }
+    function setCharacterImage(url, label = "Custom Image", filter = state.imageFilter) {
+      if (!url) return;
+      state.imageSrc = cleanImageUrl(url);
+      state.imageLabel = label || "Custom Image";
+      state.imageFilter = filter || state.imageFilter;
+      try {
+        localStorage.setItem("hapaCharacterSheetImageSrc", state.imageSrc);
+        localStorage.setItem("hapaCharacterSheetImageLabel", state.imageLabel);
+        localStorage.setItem("hapaCharacterSheetImageFilter", state.imageFilter);
+      } catch (err) {
+        // Large data URLs can exceed localStorage; keep the in-memory selection for this session.
+      }
+      playTone("select");
+      render();
+    }
+    function resetCharacterImage() {
+      state.imageSrc = DATA.image_sources?.default_url || "hapa-character-sheet-game-mock-04-mobile-passport.png";
+      state.imageLabel = "Mobile Passport Mock";
+      try {
+        localStorage.removeItem("hapaCharacterSheetImageSrc");
+        localStorage.removeItem("hapaCharacterSheetImageLabel");
+      } catch (err) {}
+      playTone("change");
+      render();
+    }
+    function imageSourceRows() {
+      const items = (DATA.image_sources?.items || []).filter((item) => state.imageFilter === "all" || item.kind === state.imageFilter).slice(0, 28);
+      return items.map((item) => {
+        const selected = item.url === state.imageSrc ? " selected" : "";
+        return `<button type="button" class="image-source-row interactive${selected}" data-image-source="${esc(item.id)}" aria-selected="${selected ? "true" : "false"}">
+          <span class="image-source-thumb" style="${esc(cssImageStyleVar("--source-image", item.url))}" aria-hidden="true"></span>
+          <span><strong>${esc(item.label)}</strong><span>${esc(item.source_app)} / ${esc(item.meta || item.kind)}</span></span>
+          <em>${esc(imageSourceLabel(item.kind))}</em>
+        </button>`;
+      }).join("") || `<div class="empty">No image sources indexed for this lane.</div>`;
+    }
+    function imageManager() {
+      const source = selectedImageSource();
+      const links = DATA.image_sources?.app_links || {};
+      const filters = [
+        ["avatar", "Avatars"],
+        ["asset_viewer", "Asset Mgr"],
+        ["media_registry", "Media"],
+        ["character_sheet", "Sheet"]
+      ];
+      return `<div class="game-card image-manager"><h4>Image Source</h4>
+        <div class="image-preview"></div>
+        <div class="record-meta" style="margin-top:8px">${esc(source.label || state.imageLabel)} / ${esc(source.source_app || "Custom")}</div>
+        <div class="source-links">
+          ${links.avatar_dashboard ? `<a href="${esc(links.avatar_dashboard)}" target="_blank" rel="noreferrer">Avatar Dashboard</a>` : ""}
+          ${links.asset_viewer ? `<a href="${esc(links.asset_viewer)}" target="_blank" rel="noreferrer">Asset Viewer</a>` : ""}
+        </div>
+        <div class="image-source-filters">${filters.map(([key, label]) => `<button type="button" data-image-filter="${esc(key)}" class="${state.imageFilter === key ? "active" : ""}">${esc(label)}</button>`).join("")}</div>
+        <div class="image-source-list">${imageSourceRows()}</div>
+        <div class="image-actions">
+          <input type="url" data-image-url-input placeholder="https:// or file:// image URL" value="">
+          <button type="button" data-image-url-apply>Apply</button>
+        </div>
+        <div class="image-apply-row">
+          <label class="image-file-label">Local File<input class="image-file-input" data-image-file type="file" accept="image/*"></label>
+          <button type="button" data-image-reset>Reset</button>
+        </div>
+      </div>`;
+    }
+    function gameListRow(label, value, cls = "", detailKey = "") {
+      const selected = detailKey && state.passportFocus === detailKey ? " selected" : "";
+      const attrs = detailKey ? dataAttrs({ "data-passport-detail": detailKey, "aria-selected": state.passportFocus === detailKey ? "true" : "false" }) : "";
+      return `<div class="game-list-row interactive${selected}" role="button" tabindex="0"${attrs}><span>${esc(label)}</span><strong class="${cls}">${esc(value)}</strong></div>`;
+    }
+    function passportChip(value, label, detailKey) {
+      const selected = state.passportFocus === detailKey ? " selected" : "";
+      return `<div class="proof-chip-big interactive${selected}" role="button" tabindex="0" data-passport-detail="${esc(detailKey)}" aria-selected="${state.passportFocus === detailKey ? "true" : "false"}"><strong>${fmt(value)}</strong><span>${esc(label)}</span></div>`;
+    }
+    function lowerTiles(items) {
+      return `<div class="lower-grid">${items.slice(0, 8).map((item) => `<div class="lower-tile"><strong>${esc(item.value)}</strong><span>${esc(item.label)}</span></div>`).join("")}</div>`;
+    }
+    function exampleList(items) {
+      return `<div class="example-list">${items.slice(0, 6).map((item) => `<div class="example-card"><strong>${esc(item.title)}</strong><span>${esc(item.meta || "")}</span>${item.body ? `<span>${esc(item.body)}</span>` : ""}</div>`).join("")}</div>`;
+    }
+    function aggregateBy(items, key, valueKey) {
+      const map = new Map();
+      for (const item of items || []) {
+        const label = item[key] || "unknown";
+        const value = Number(valueKey ? item[valueKey] || 0 : 1);
+        map.set(label, (map.get(label) || 0) + value);
+      }
+      return [...map.entries()].sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label, value: fmt(value) }));
+    }
+    function proofLayers() {
+      const protocolCount = DATA.protocols.length + DATA.docs.length + DATA.contracts.length;
+      return [
+        {
+          key: "sources", label: "Sources", code: "SR", value: DATA.summary.items, meta: `${fmt(DATA.summary.exposures)} exposures`, cls: "cyan", x: 15, y: 22,
+          body: "Source material is the intake layer: wiki records, videos, cards, artifacts, reading, music, dependencies, and watched media that taught or seeded later work.",
+          lower: DATA.source_systems.slice(0, 8).map((item) => ({ label: item.source_system || "unknown", value: fmt(item.items) })),
+          examples: DATA.source_systems.slice(0, 6).map((item) => ({ title: item.source_system || "unknown", meta: `${fmt(item.items)} items / ${fmt(item.exposures)} exposures`, body: item.mediums || "source system" })),
+          facts: [["Items", DATA.summary.items], ["Exposures", DATA.summary.exposures], ["Mediums", DATA.mediums.length]]
+        },
+        {
+          key: "turns", label: "Turns", code: "AI", value: DATA.summary.turns, meta: `${fmt(DATA.summary.turn_learning_links)} learning links`, cls: "gold", x: 50, y: 10,
+          body: "AI turns are indexed as applied practice: prompt objective, model response summary, learning links, result links, and reusable wisdom cards.",
+          lower: aggregateBy(DATA.turns, "platform").slice(0, 8),
+          examples: DATA.turns.slice(0, 6).map((turn) => ({ title: turn.objective || turn.thread_title || turn.turn_id, meta: `${turn.platform || "turn"} / score ${fmt(turn.hapa_relevance_score)}`, body: turn.model_response_summary })),
+          facts: [["Turns", DATA.summary.turns], ["Learning", DATA.summary.turn_learning_links], ["Results", DATA.summary.turn_result_links]]
+        },
+        {
+          key: "skills", label: "Skills", code: "SK", value: DATA.skills.length, meta: `${fmt(DATA.summary.skill_evidence)} evidence XP`, cls: "pink", x: 84, y: 22,
+          body: "Skills are the consolidated capability layer. They compress consumed material, turns, artifacts, and enrichment into professional skill families.",
+          lower: DATA.skill_families.slice(0, 8).map((family) => ({ label: prettyFamily(family.label), value: `${fmt(family.skill_count)} skills` })),
+          examples: DATA.skills.slice(0, 6).map((skill) => ({ title: skill.label, meta: `${prettyFamily(skill.skill_family)} / ${skill.rank} / ${fmt(skill.evidence_count)} XP`, body: skill.summary })),
+          facts: [["Skills", DATA.skills.length], ["Families", DATA.skill_families.length], ["Evidence", DATA.summary.skill_evidence]]
+        },
+        {
+          key: "nodes", label: "Nodes", code: "ND", value: DATA.nodes.length, meta: `${fmt(DATA.summary.node_skills)} node skills`, cls: "rose", x: 86, y: 55,
+          body: "Hapa nodes are the portfolio and operating artifacts: apps, protocols, workflows, maps, existing nodes, proposed nodes, and generated surfaces.",
+          lower: DATA.node_type_summary.slice(0, 8).map((item) => ({ label: prettyFamily(item.label), value: fmt(item.count) })),
+          examples: DATA.nodes.slice(0, 6).map((node) => ({ title: node.label, meta: `${node.node_type} / ${fmt(node.topic_count)} topics / ${fmt(node.card_count)} cards`, body: node.description })),
+          facts: [["Nodes", DATA.nodes.length], ["Topics", DATA.nodes.reduce((sum, node) => sum + Number(node.topic_count || 0), 0)], ["Cards", DATA.nodes.reduce((sum, node) => sum + Number(node.card_count || 0), 0)]]
+        },
+        {
+          key: "capabilities", label: "Capabilities", code: "CP", value: DATA.capabilities.length, meta: `${fmt(DATA.summary.capability_bridges)} bridges`, cls: "cyan", x: 68, y: 84,
+          body: "Capabilities connect general skills to Hapa nodes through using/enhancing modes, practice steps, success signals, bodies, topics, cards, and bridge counts.",
+          lower: aggregateBy(DATA.capabilities, "mode").slice(0, 8),
+          examples: DATA.capabilities.slice(0, 6).map((cap) => ({ title: cap.label, meta: `${cap.mode} / ${cap.node_label} / ${fmt(cap.link_count)} bridges`, body: cap.description })),
+          facts: [["Node Skills", DATA.capabilities.length], ["Bridges", DATA.summary.capability_bridges], ["Modes", aggregateBy(DATA.capabilities, "mode").length]]
+        },
+        {
+          key: "media", label: "Media", code: "MD", value: DATA.media.length, meta: `${fmt(DATA.image_sources?.items?.length || 0)} image sources`, cls: "green", x: 32, y: 84,
+          body: "Media is the outward proof layer: generated images, cards, avatars, queue records, screenshots, videos, prompts, targets, and presentation artifacts.",
+          lower: aggregateBy(DATA.media, "status").slice(0, 8),
+          examples: DATA.media.slice(0, 6).map((media) => ({ title: media.target_label || media.visual_label || media.job_id, meta: `${media.status} / ${media.provider} / ${media.media_type}`, body: media.prompt_text || media.direction_prompt })),
+          facts: [["Media Jobs", DATA.media.length], ["Generated", DATA.media.filter((item) => item.status === "generated").length], ["Image Sources", DATA.image_sources?.items?.length || 0]]
+        },
+        {
+          key: "agents", label: "Agents", code: "AG", value: DATA.agents.length + DATA.harnesses.length, meta: `${fmt(DATA.harnesses.length)} harnesses`, cls: "green", x: 10, y: 55,
+          body: "Agents and harnesses are operating profiles: who can use the proof, which avatar/agent context they carry, and what local runtime affordances support them.",
+          lower: [{ label: "agents", value: fmt(DATA.agents.length) }, { label: "harnesses", value: fmt(DATA.harnesses.length) }, { label: "local skills", value: fmt(DATA.agents.reduce((sum, agent) => sum + Number(agent.local_skill_count || 0), 0)) }],
+          examples: [...DATA.agents, ...DATA.harnesses].slice(0, 6).map((agent) => ({ title: agent.label, meta: agent.agent_kind || agent.harness_kind || "agent", body: agent.role_summary || agent.description })),
+          facts: [["Agents", DATA.agents.length], ["Harnesses", DATA.harnesses.length], ["Profiles", DATA.agents.length + DATA.harnesses.length]]
+        },
+        {
+          key: "protocols", label: "Protocols", code: "PR", value: protocolCount, meta: `${fmt(DATA.contracts.length)} contracts`, cls: "gold", x: 50, y: 68,
+          body: "Protocols make the proof reusable. They define docs, manifests, API/CLI contracts, flow sidecars, board events, wiki articles, and operating standards.",
+          lower: [{ label: "wiki protocols", value: fmt(DATA.protocols.length) }, { label: "docs", value: fmt(DATA.docs.length) }, { label: "contracts", value: fmt(DATA.contracts.length) }],
+          examples: [...DATA.protocols.map((item) => ({ title: item.title, meta: item.article_type || "protocol", body: item.summary })), ...DATA.docs.map((item) => ({ title: item.title, meta: item.kind || "doc", body: item.summary })), ...DATA.contracts.map((item) => ({ title: item.title, meta: item.kind || "contract", body: item.summary }))].slice(0, 6),
+          facts: [["Protocols", DATA.protocols.length], ["Docs", DATA.docs.length], ["Contracts", DATA.contracts.length]]
+        }
+      ];
+    }
+    function proofLayerByKey(key) {
+      const layers = proofLayers();
+      return layers.find((layer) => layer.key === key) || layers.find((layer) => layer.key === "skills") || layers[0];
+    }
+    function setProofFocus(key) {
+      state.proofFocus = key || "skills";
+      state.gamePanel = "proof";
+      state.view = "presentation";
+      window.location.hash = `presentation-proof&proof=${encodeURIComponent(state.proofFocus)}`;
+      playTone("select");
+      render();
+    }
+    function proofLayerRow(layer) {
+      const selected = state.proofFocus === layer.key ? " selected" : "";
+      return `<button type="button" class="proof-layer-row interactive${selected}" data-proof-focus="${esc(layer.key)}" aria-selected="${selected ? "true" : "false"}">
+        <span class="proof-layer-icon">${esc(layer.code)}</span>
+        <span><strong>${esc(layer.label)}</strong><span>${esc(layer.meta)}</span></span>
+        <em>${fmt(layer.value)}</em>
+      </button>`;
+    }
+    function proofEdges(layers) {
+      const pos = Object.fromEntries(layers.map((layer) => [layer.key, layer]));
+      const chain = [["sources", "turns"], ["turns", "skills"], ["skills", "nodes"], ["nodes", "capabilities"], ["capabilities", "media"], ["capabilities", "agents"], ["media", "protocols"], ["agents", "protocols"], ["protocols", "sources"]];
+      const center = layers.map((layer) => `<line class="${state.proofFocus === layer.key ? "selected" : ""}" x1="50" y1="50" x2="${layer.x}" y2="${layer.y}"></line>`).join("");
+      const chainLines = chain.filter(([a, b]) => pos[a] && pos[b]).map(([a, b]) => `<line class="chain ${state.proofFocus === a || state.proofFocus === b ? "selected" : ""}" x1="${pos[a].x}" y1="${pos[a].y}" x2="${pos[b].x}" y2="${pos[b].y}"></line>`).join("");
+      return `<svg class="proof-edges" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${center}${chainLines}</svg>`;
+    }
+    function proofFlowSteps() {
+      const steps = [
+        ["Read", DATA.summary.items, "sources", "source intake"],
+        ["Practice", DATA.summary.turns, "turns", "AI turn proof"],
+        ["Learn", DATA.skills.length, "skills", "skill consolidation"],
+        ["Build", DATA.nodes.length, "nodes", "portfolio nodes"],
+        ["Prove", DATA.capabilities.length, "capabilities", "capability bridges"],
+        ["Publish", DATA.media.length, "media", "media artifacts"]
+      ];
+      return `<div class="proof-flow-strip">${steps.map(([label, value, key, meta]) => `<button type="button" class="proof-flow-step interactive${state.proofFocus === key ? " selected" : ""}" data-proof-focus="${esc(key)}"><strong>${esc(label)}</strong><span>${fmt(value)}</span><small>${esc(meta)}</small></button>`).join("")}</div>`;
+    }
+    function proofFactRows(layer) {
+      return `<div class="game-list">${(layer.facts || []).map(([label, value]) => codexFactRow(label, fmt(value))).join("")}</div>`;
+    }
+    function proofMiniPanel(title, rows) {
+      return `<aside class="game-card proof-mini-panel"><h4>${esc(title)}</h4><div class="game-list">${rows.map((item) => gameListRow(item.label, item.value)).join("")}</div></aside>`;
+    }
+    function prettyFamily(value) {
+      return String(value || "unknown").replaceAll("_", " ");
+    }
+    function initials(value) {
+      const parts = String(value || "HA").replace(/[^A-Za-z0-9 ]/g, " ").trim().split(/\s+/).filter(Boolean);
+      const letters = parts.slice(0, 2).map((part) => part[0]).join("").toUpperCase();
+      return (letters || "HA").slice(0, 2);
+    }
+    function familyIndex(family) {
+      const index = DATA.skill_families.findIndex((item) => item.label === family);
+      if (index >= 0) return index;
+      return Math.abs(String(family || "").split("").reduce((sum, char) => sum + char.charCodeAt(0), 0)) % 8;
+    }
+    function familySpriteStyle(family) {
+      const slot = familyIndex(family) % 8;
+      const col = slot % 4;
+      const row = Math.floor(slot / 4);
+      return `--sprite-x:${col * 33.3333}%;--sprite-y:${row * 100}%;`;
+    }
+    function familyThumb(family, cls = "") {
+      return `<span class="family-thumb ${esc(cls)}" style="${familySpriteStyle(family)}" aria-hidden="true"></span>`;
+    }
+    function nodeTypeClass(type) {
+      return `node-type-${String(type || "node").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;
+    }
+    function nodeTypeLabel(type) {
+      return prettyFamily(type || "hapa node");
+    }
+    function nodeTypeTheme(node) {
+      const type = String(node?.node_type || "").toLowerCase();
+      if (type === "existing_node") return ["#22d3ee", "#2563eb", "#a7f3d0"];
+      if (type === "proposed_node") return ["#f472b6", "#7c3aed", "#fbbf24"];
+      if (type === "hapa_node") return ["#34d399", "#0891b2", "#67e8f9"];
+      if (type === "cymatica_node") return ["#fbbf24", "#db2777", "#c4b5fd"];
+      if (type === "node_map") return ["#38bdf8", "#14b8a6", "#f0abfc"];
+      return ["#22d3ee", "#a855f7", "#fbbf24"];
+    }
+    function nodeThemeStyle(node) {
+      const [a, b, c] = nodeTypeTheme(node);
+      return `--node-a:${a};--node-b:${b};--node-c:${c};`;
+    }
+    function nodeThumb(node, cls = "") {
+      return `<span class="node-thumb ${esc(nodeTypeClass(node?.node_type))} ${esc(cls)}" style="${nodeThemeStyle(node)}" aria-hidden="true"><span class="node-thumb-mark"></span><strong>${esc(initials(node?.label || node?.node_label || "HN"))}</strong></span>`;
+    }
+    function uniqueBy(items, keyFn) {
+      const seen = new Set();
+      return (items || []).filter((item) => {
+        const key = keyFn(item);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+    function skillsForFamily(family) {
+      return DATA.skills.filter((skill) => skill.skill_family === family);
+    }
+    function capabilityFamilyMatch(capability, family, skillNames = null) {
+      if (!capability || !family) return false;
+      if (capability.skill_family === family) return true;
+      const names = skillNames || new Set(skillsForFamily(family).map((skill) => String(skill.label || "").toLowerCase()));
+      return (capability.connected_skills || []).some((skill) => names.has(String(skill || "").toLowerCase()));
+    }
+    function capabilitiesForFamily(family) {
+      const familySkills = skillsForFamily(family);
+      const skillNames = new Set(familySkills.map((skill) => String(skill.label || "").toLowerCase()));
+      const matches = DATA.capabilities.filter((capability) => capabilityFamilyMatch(capability, family, skillNames));
+      if (matches.length) return uniqueBy(matches, (capability) => capability.node_skill_id);
+      const familySlot = Math.max(0, familyIndex(family));
+      return uniqueBy(DATA.capabilities.filter((_, index) => index % Math.max(1, DATA.skill_families.length) === familySlot), (capability) => capability.node_skill_id).slice(0, 12);
+    }
+    function familyForCapability(capability) {
+      const match = DATA.skill_families.find((family) => capabilityFamilyMatch(capability, family.label));
+      return match?.label || state.codexFamily || DATA.skill_families[0]?.label || "";
+    }
+    function defaultCapabilityForFamily(family) {
+      const caps = capabilitiesForFamily(family);
+      const byNode = uniqueBy(caps, (capability) => capability.node_id || capability.node_label || capability.node_skill_id);
+      const pool = byNode.length ? byNode : caps;
+      return pool[familyIndex(family) % Math.max(1, pool.length)] || DATA.capabilities[0] || {};
+    }
+    function selectedCodexCapability(family) {
+      const familyCaps = capabilitiesForFamily(family);
+      let selected = DATA.capabilities.find((capability) => capability.node_skill_id === state.codexCapabilityId);
+      if (!state.codexCapabilityId || !selected || !familyCaps.some((capability) => capability.node_skill_id === selected.node_skill_id)) {
+        selected = defaultCapabilityForFamily(family);
+      }
+      return selected;
+    }
+    function nodesForFamily(family) {
+      const caps = capabilitiesForFamily(family);
+      const ids = new Set(caps.map((capability) => capability.node_id).filter(Boolean));
+      const matched = DATA.nodes.filter((node) => ids.has(node.node_id));
+      if (matched.length) return uniqueBy(matched, (node) => node.node_id);
+      const slot = Math.max(0, familyIndex(family));
+      return DATA.nodes.filter((_, index) => index % Math.max(1, DATA.skill_families.length) === slot).slice(0, 12);
+    }
+    function codexTags(items, cls = "green", limit = 10) {
+      const tags = (items || []).filter(Boolean).slice(0, limit).map((item) => badge(item, cls)).join("");
+      return tags || badge("No pinned signals yet", "cyan");
+    }
+    function codexFactRow(label, value) {
+      return `<div class="game-list-row"><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`;
+    }
+    function setCodexHash() {
+      window.location.hash = `presentation-codex&family=${encodeURIComponent(state.codexFamily || "")}&cap=${encodeURIComponent(state.codexCapabilityId || "")}`;
+    }
+    function selectCodexFamily(family) {
+      state.codexFamily = family || DATA.skill_families[0]?.label || "";
+      const selected = defaultCapabilityForFamily(state.codexFamily);
+      state.codexCapabilityId = selected.node_skill_id || "";
+      state.gamePanel = "codex";
+      state.view = "presentation";
+      setCodexHash();
+      render();
+    }
+    function selectCodexCapability(capabilityId) {
+      const selected = DATA.capabilities.find((capability) => capability.node_skill_id === capabilityId) || DATA.capabilities[0] || {};
+      state.codexCapabilityId = selected.node_skill_id || "";
+      state.codexFamily = capabilityFamilyMatch(selected, state.codexFamily) ? state.codexFamily : familyForCapability(selected);
+      state.gamePanel = "codex";
+      state.view = "presentation";
+      setCodexHash();
+      render();
+    }
+    function selectCodexNode(nodeId) {
+      const selected = DATA.capabilities.find((capability) => capability.node_id === nodeId) || DATA.capabilities.find((capability) => capability.node_label === nodeId) || DATA.capabilities[0] || {};
+      state.codexCapabilityId = selected.node_skill_id || "";
+      state.codexFamily = capabilityFamilyMatch(selected, state.codexFamily) ? state.codexFamily : familyForCapability(selected);
+      state.gamePanel = "codex";
+      state.view = "presentation";
+      setCodexHash();
+      render();
+    }
+    function codexSkillInventory(selectedFamily) {
+      return DATA.skill_families.map((family) => {
+        const rows = skillsForFamily(family.label).map((skill) => {
+          const selected = family.label === selectedFamily ? " selected" : "";
+          return `<button type="button" class="inventory-item interactive${selected}" data-codex-family="${esc(family.label)}" data-codex-skill-id="${esc(skill.skill_id)}" aria-selected="${selected ? "true" : "false"}">
+            ${familyThumb(skill.skill_family, "small")}
+            <span><strong>${esc(skill.label)}</strong><span>${fmt(skill.evidence_count)} XP / ${fmt(skill.artifact_count)} artifacts</span></span>
+            <em>${esc(skill.rank)}</em>
+          </button>`;
+        }).join("");
+        return `<div class="inventory-group">
+          <div class="inventory-group-title"><span>${esc(prettyFamily(family.label))}</span><span>${fmt(family.skill_count)} skills</span></div>
+          ${rows}
+        </div>`;
+      }).join("");
+    }
+    function codexNodeInventory(selectedCapability) {
+      const grouped = new Map();
+      for (const node of DATA.nodes) {
+        const key = node.node_type || "node";
+        if (!grouped.has(key)) grouped.set(key, []);
+        grouped.get(key).push(node);
+      }
+      return [...grouped.entries()].map(([type, nodes]) => {
+        const rows = nodes.map((node) => {
+          const selected = selectedCapability?.node_id === node.node_id ? " selected" : "";
+          return `<button type="button" class="inventory-item interactive${selected}" data-codex-node-id="${esc(node.node_id)}" aria-selected="${selected ? "true" : "false"}">
+            ${nodeThumb(node, "small")}
+            <span><strong>${esc(node.label)}</strong><span>${fmt(node.topic_count)} topics / ${fmt(node.card_count)} cards</span></span>
+            <em>${esc(node.node_type || "node")}</em>
+          </button>`;
+        }).join("");
+        return `<div class="inventory-group">
+          <div class="inventory-group-title"><span>${esc(type.replaceAll("_", " "))}</span><span>${fmt(nodes.length)} nodes</span></div>
+          ${rows}
+        </div>`;
+      }).join("");
+    }
+    function timelineLayers() {
+      return [{ key: "all", label: "All Canon", count: DATA.timeline?.summary?.timeline_events || 0 }, ...(DATA.timeline?.layers || [])];
+    }
+    function timelineLayerMeta(key) {
+      return timelineLayers().find((layer) => layer.key === key) || timelineLayers()[0] || { key: "all", label: "All Canon", count: 0 };
+    }
+    function timelineLayerCode(key) {
+      return { all: "ALL", knowledge: "KN", turns: "AI", skills: "SK", nodes: "ND", capabilities: "CP" }[key] || initials(key);
+    }
+    function timelineLayerClass(key) {
+      return `timeline-layer-${String(key || "all").replace(/[^a-z0-9]+/g, "-")}`;
+    }
+    function timelineDateLabel(value) {
+      if (!value) return "Undated";
+      return String(value).slice(0, 10);
+    }
+    function timelineEraById(id) {
+      return (DATA.timeline?.eras || []).find((era) => era.id === id) || null;
+    }
+    function setTimelineHash() {
+      window.location.hash = `presentation-timeline&era=${encodeURIComponent(state.timelineEra || "all")}&layer=${encodeURIComponent(state.timelineLayer || "all")}&beat=${encodeURIComponent(state.timelineBeatId || "")}`;
+    }
+    function timelineFilteredBeats() {
+      let beats = DATA.timeline?.beats || [];
+      if (state.timelineLayer && state.timelineLayer !== "all") beats = beats.filter((beat) => beat.layer === state.timelineLayer);
+      if (state.timelineEra && state.timelineEra !== "all") beats = beats.filter((beat) => beat.era_id === state.timelineEra);
+      return beats;
+    }
+    function selectedTimelineBeat() {
+      const filtered = timelineFilteredBeats();
+      let selected = filtered.find((beat) => beat.id === state.timelineBeatId) || (DATA.timeline?.beats || []).find((beat) => beat.id === state.timelineBeatId);
+      if (!selected) selected = filtered[0] || (DATA.timeline?.beats || [])[0] || {};
+      state.timelineBeatId = selected.id || "";
+      return selected;
+    }
+    function selectTimelineBeat(beatId) {
+      state.timelineBeatId = beatId || "";
+      state.gamePanel = "timeline";
+      state.view = "presentation";
+      setTimelineHash();
+      render();
+    }
+    function selectTimelineLayer(layer) {
+      state.timelineLayer = layer || "all";
+      const filtered = timelineFilteredBeats();
+      if (!filtered.some((beat) => beat.id === state.timelineBeatId)) state.timelineBeatId = filtered[0]?.id || "";
+      state.gamePanel = "timeline";
+      state.view = "presentation";
+      setTimelineHash();
+      render();
+    }
+    function selectTimelineEra(eraId) {
+      state.timelineEra = eraId || "all";
+      const filtered = timelineFilteredBeats();
+      if (!filtered.some((beat) => beat.id === state.timelineBeatId)) state.timelineBeatId = filtered[0]?.id || "";
+      state.gamePanel = "timeline";
+      state.view = "presentation";
+      setTimelineHash();
+      render();
+    }
+    function timelineEraRail() {
+      const allSelected = state.timelineEra === "all";
+      const allTotal = (DATA.timeline?.eras || []).reduce((sum, era) => sum + Number(era.total || 0), 0);
+      const allCard = `<button type="button" class="timeline-era-card interactive${allSelected ? " selected" : ""}" data-timeline-era="all" aria-selected="${allSelected ? "true" : "false"}"><strong>Whole Canon</strong><span>${fmt(allTotal)} tracked character events</span><p>${esc(DATA.timeline?.summary?.canon_copy || "Complete historical rail.")}</p></button>`;
+      const eraCards = (DATA.timeline?.eras || []).map((era) => {
+        const selected = state.timelineEra === era.id ? " selected" : "";
+        return `<button type="button" class="timeline-era-card interactive${selected}" data-timeline-era="${esc(era.id)}" aria-selected="${selected ? "true" : "false"}"><strong>${esc(era.label)}</strong><span>${esc(timelineDateLabel(era.start))} -> ${esc(era.end ? timelineDateLabel(era.end) : "present")} / ${fmt(era.total)} events</span><p>${esc(era.body)}</p></button>`;
+      }).join("");
+      return `<div class="timeline-era-rail">${allCard}${eraCards}</div>`;
+    }
+    function timelineLayerRail() {
+      return `<div class="timeline-layer-rail">${timelineLayers().map((layer) => {
+        const selected = state.timelineLayer === layer.key ? " selected" : "";
+        return `<button type="button" class="timeline-layer-card interactive${selected}" data-timeline-layer="${esc(layer.key)}" aria-selected="${selected ? "true" : "false"}"><strong>${esc(layer.label)}</strong><span>${timelineLayerCode(layer.key)} / ${fmt(layer.count || 0)} events</span></button>`;
+      }).join("")}</div>`;
+    }
+    function timelineBeatCard(beat) {
+      const selected = beat.id === state.timelineBeatId ? " selected" : "";
+      const meta = [timelineDateLabel(beat.date), prettyFamily(beat.event_type), beat.source_system].filter(Boolean).join(" / ");
+      return `<button type="button" class="timeline-beat-card interactive${selected}" data-timeline-beat="${esc(beat.id)}" aria-selected="${selected ? "true" : "false"}">
+        <span class="timeline-beat-icon ${esc(timelineLayerClass(beat.layer))}">${esc(timelineLayerCode(beat.layer))}</span>
+        <span><strong>${esc(beat.title || "Timeline Beat")}</strong><span>${esc(meta)}</span></span>
+        <em>${esc(timelineLayerMeta(beat.layer).label || beat.layer)}</em>
+      </button>`;
+    }
+    function timelineBeatList() {
+      const beats = timelineFilteredBeats();
+      return `<div class="timeline-beat-list">${beats.map(timelineBeatCard).join("") || `<div class="empty">No canon beats match this era/layer filter.</div>`}</div>`;
+    }
+    function timelineSeries() {
+      let rows = DATA.timeline?.series || [];
+      if (state.timelineLayer && state.timelineLayer !== "all") rows = rows.filter((row) => row.layer === state.timelineLayer);
+      if (state.timelineEra && state.timelineEra !== "all") rows = rows.filter((row) => row.era_id === state.timelineEra);
+      const bucketMap = new Map();
+      for (const row of rows) {
+        if (!row.bucket) continue;
+        const bucket = bucketMap.get(row.bucket) || { bucket: row.bucket, layers: [], total: 0 };
+        bucket.layers.push(row);
+        bucket.total += Number(row.events || 0);
+        bucketMap.set(row.bucket, bucket);
+      }
+      const buckets = [...bucketMap.values()].slice(-96);
+      const maxTotal = Math.max(1, ...buckets.map((bucket) => bucket.total));
+      return `<div class="timeline-series-list">${buckets.map((bucket) => {
+        const bars = bucket.layers.map((layer) => {
+          const width = Math.max(4, (Number(layer.events || 0) / maxTotal) * 100);
+          return `<i class="${esc(timelineLayerClass(layer.layer))}" style="--w:${width.toFixed(2)}%" title="${esc(`${timelineLayerMeta(layer.layer).label}: ${fmt(layer.events)} events`)}"></i>`;
+        }).join("");
+        return `<div class="timeline-series-row"><span>${esc(bucket.bucket)}</span><div class="timeline-track">${bars}</div><strong>${fmt(bucket.total)} ev</strong></div>`;
+      }).join("") || `<div class="empty">No timeline series matches this filter.</div>`}</div>`;
+    }
+    function timelineInspector(beat) {
+      const metrics = beat.metrics || {};
+      const linkedSkill = beat.target_type === "skill" ? DATA.skills.find((skill) => skill.skill_id === beat.target_id) : null;
+      const linkedNode = DATA.nodes.find((node) => node.node_id === beat.target_id || node.label === beat.title);
+      const linkedCapability = DATA.capabilities.find((capability) => capability.node_skill_id === beat.target_id || capability.label === beat.title);
+      const examples = [linkedSkill, linkedNode, linkedCapability].filter(Boolean).map((item) => ({
+        title: item.label || item.title,
+        meta: item.skill_family || item.node_type || item.mode || "linked record",
+        body: item.summary || item.description || "Linked Character Sheet record."
+      }));
+      return `<aside class="game-card timeline-inspector"><h4>Canon Inspector</h4>
+        <div class="record-title"><strong>${esc(beat.title || "Timeline Beat")}</strong><span class="rank s">${esc(timelineLayerCode(beat.layer))}</span></div>
+        <p>${esc(beat.body || "Selected historical beat from the Character Sheet canon timeline.")}</p>
+        <div class="game-list" style="margin-top:12px">
+          ${codexFactRow("Date", timelineDateLabel(beat.date))}
+          ${codexFactRow("Era", timelineEraById(beat.era_id)?.label || "Whole Canon")}
+          ${codexFactRow("Layer", timelineLayerMeta(beat.layer).label || beat.layer)}
+          ${codexFactRow("Event Type", prettyFamily(beat.event_type))}
+          ${codexFactRow("Source", beat.source_system || "Second Brain")}
+          ${codexFactRow("Confidence", beat.confidence ? String(beat.confidence) : "projection")}
+          ${codexFactRow("Target", beat.target_id || "n/a")}
+        </div>
+        <div class="section-kicker">Activity Metrics</div>
+        ${lowerTiles([
+          { label: "Events", value: fmt(metrics.event_count || 1) },
+          { label: "Content XP", value: fmt(metrics.content_words || 0) },
+          { label: "Code Lines", value: fmt(metrics.code_lines || 0) },
+          { label: "Caps", value: fmt(metrics.capability_count || 0) }
+        ])}
+        <div class="section-kicker">Linked Sheet Records</div>
+        ${exampleList(examples.length ? examples : [{ title: "Second Brain Timeline", meta: beat.target_type || "event", body: "Open the source timeline route or raw data view to inspect this target in full." }])}
+      </aside>`;
+    }
+    function timelineSourcePanels() {
+      const rows = (DATA.timeline?.source_mix || []).slice(0, 24);
+      const grouped = new Map();
+      for (const row of rows) {
+        const key = row.source_system || "unknown";
+        const entry = grouped.get(key) || { source_system: key, count: 0, events: [] };
+        entry.count += Number(row.count || 0);
+        entry.events.push(row);
+        grouped.set(key, entry);
+      }
+      return `<div class="timeline-source-grid">${[...grouped.values()].slice(0, 4).map((source) => `<aside class="game-card proof-mini-panel"><h4>${esc(source.source_system)}</h4><div class="game-list">${source.events.slice(0, 6).map((item) => gameListRow(prettyFamily(item.event_type), fmt(item.count))).join("")}</div></aside>`).join("")}</div>`;
+    }
+    function detailCard(title, kind, body, lower, examples) {
+      return `<div class="game-card passport-detail">
+        <div class="detail-kicker">${esc(kind)}</div>
+        <h4>${esc(title)}${badge("Inspect", "gold")}</h4>
+        <p>${esc(body)}</p>
+        <div class="section-kicker" style="margin-top:14px">Next aggregation lower</div>
+        ${lowerTiles(lower)}
+        <div class="section-kicker" style="margin-top:14px">Examples</div>
+        ${exampleList(examples)}
+      </div>`;
+    }
+    function statIconClass(label) {
+      return `stat-${String(label || "").toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+    }
+    function skillHighlightRow(skill) {
+      return `<div class="skill-highlight-row interactive">
+        ${familyThumb(skill.skill_family, "small animated")}
+        <span><strong>${esc(skill.label)}</strong><span>${esc(prettyFamily(skill.skill_family))} / ${fmt(skill.evidence_count)} XP</span></span>
+        <em>${esc(skill.rank)} ${fmt(skill.level)}</em>
+      </div>`;
+    }
+    function gameStats() {
+      return `<div class="game-stats">${DATA.stats.map((stat) => `<article class="game-stat">
+        <div class="game-stat-head">
+          <span class="stat-icon ${esc(statIconClass(stat.label))}" aria-hidden="true"><i></i></span>
+          <div><div class="game-stat-top"><span>${esc(stat.label)}</span><span>${fmt(stat.value)}</span></div><div class="bar"><div class="fill" style="--value:${pct(stat.value)}"></div></div></div>
+        </div>
+        <div class="record-meta">${esc(stat.detail)}</div>
+      </article>`).join("")}</div>`;
+    }
+    function renderPresentationHero() {
+      const topSkills = DATA.skills.slice(0, 8).map((skill) => skillHighlightRow(skill)).join("");
+      const proof = [
+        [DATA.summary.items, "Source Items"],
+        [DATA.summary.skill_evidence, "Evidence XP"],
+        [DATA.summary.turns, "Turns"],
+        [DATA.summary.media_jobs, "Media Jobs"],
+        [DATA.summary.capability_bridges, "Bridges"]
+      ].map(([value, label]) => `<div class="proof-chip-big"><strong>${fmt(value)}</strong><span>${esc(label)}</span></div>`).join("");
+      const chain = [
+        ["Read", DATA.summary.items],
+        ["Learn", DATA.skills.length],
+        ["Practice", DATA.summary.turns],
+        ["Build", DATA.nodes.length],
+        ["Prove", DATA.summary.skill_evidence],
+        ["Publish", DATA.summary.media_jobs]
+      ].map(([label, value]) => `<div class="proof-step"><strong>${esc(label)}</strong><span>${fmt(value)}</span></div>`).join("");
+      return `<div class="game-frame"><div class="game-panel game-hero-grid">
+        <aside class="portrait-card">
+          <div class="portrait-art"></div>
+          <div class="class-plate"><strong>Knowledge Architect</strong><span>AI Systems Builder</span></div>
+          <div class="identity-strip">
+            <div><span class="record-meta">Status</span><br>${badge("Operational", "green")}</div>
+            <div><span class="record-meta">Mode</span><br>${badge("Signal / Proof", "gold")}</div>
+          </div>
+        </aside>
+        <section>
+          <div class="game-title">
+            <div>
+              <div class="section-kicker">Professional RPG Dossier</div>
+              <h3>${esc(DATA.profile.name)}</h3>
+              <p>${esc(DATA.profile.resume_summary)}</p>
+              <div class="tag-row">${chips(DATA.profile.roles, "cyan")}</div>
+            </div>
+            <div class="rank-medal">S</div>
+          </div>
+          ${gameStats()}
+          <div class="game-proof-strip">${proof}</div>
+          <div class="proof-chain">${chain}</div>
+        </section>
+        <aside class="game-side-stack">
+          <div class="game-card"><h4>Skill Highlights</h4><div class="game-list">${topSkills}</div></div>
+          ${imageManager()}
+          <div class="game-card"><h4>Visual Layers</h4>${mockGallery()}</div>
+        </aside>
+      </div></div>`;
+    }
+    function renderPresentationCodex() {
+      const families = DATA.skill_families.slice(0, 8);
+      if (!DATA.skill_families.some((family) => family.label === state.codexFamily)) state.codexFamily = DATA.skill_families[0]?.label || "";
+      const selectedFamily = state.codexFamily;
+      const familyRecord = DATA.skill_families.find((family) => family.label === selectedFamily) || DATA.skill_families[0] || {};
+      const familySkills = skillsForFamily(selectedFamily);
+      const familyCaps = capabilitiesForFamily(selectedFamily);
+      const familyNodes = nodesForFamily(selectedFamily);
+      const selected = selectedCodexCapability(selectedFamily);
+      state.codexCapabilityId = selected.node_skill_id || "";
+      const branches = families.map((family) => {
+        const active = family.label === selectedFamily ? " selected" : "";
+        return `<button type="button" class="tree-branch interactive${active}" data-codex-family="${esc(family.label)}" aria-selected="${active ? "true" : "false"}">
+          ${familyThumb(family.label)}
+          <span><strong>${esc(prettyFamily(family.label))}</strong><span>${fmt(family.evidence_count)} XP / ${fmt(family.skill_count)} skills</span></span>
+        </button>`;
+      }).join("");
+      const classRows = DATA.profile.roles.slice(0, 4).map((role, index) => gameListRow(role, `Rank ${91 - index * 4}`)).join("");
+      const capabilityRows = familyCaps.slice(0, 10).map((capability) => {
+        const active = capability.node_skill_id === selected.node_skill_id ? " selected" : "";
+        const marker = capability.mode === "enhancing" ? "Enhance" : "Use";
+        return `<div class="game-list-row interactive${active}" role="button" tabindex="0" data-codex-capability="${esc(capability.node_skill_id)}" aria-selected="${active ? "true" : "false"}">
+          <span>${esc(capability.label)}</span><strong>${esc(marker)}</strong>
+        </div>`;
+      }).join("");
+      const familySkillRows = familySkills.slice(0, 9).map((skill) => `<div class="game-list-row compact interactive" role="button" tabindex="0" data-codex-family="${esc(skill.skill_family)}" data-codex-skill-id="${esc(skill.skill_id)}">
+        ${familyThumb(skill.skill_family, "small")}
+        <span><strong>${esc(skill.label)}</strong><span>${fmt(skill.evidence_count)} XP / ${fmt(skill.source_count)} sources</span></span>
+        <strong>${esc(skill.rank)}</strong>
+      </div>`).join("");
+      const linkedNodeRows = familyNodes.slice(0, 8).map((node) => `<div class="game-list-row compact interactive${selected.node_id === node.node_id ? " selected" : ""}" role="button" tabindex="0" data-codex-node-id="${esc(node.node_id)}" aria-selected="${selected.node_id === node.node_id ? "true" : "false"}">
+        ${nodeThumb(node, "small")}
+        <span><strong>${esc(node.label)}</strong><span>${esc(node.node_type || "node")} / ${fmt(node.card_count)} proof cards</span></span>
+        <strong>${fmt(node.topic_count)}</strong>
+      </div>`).join("");
+      const connectedSkills = uniqueBy([...(selected.connected_skills || []), ...familySkills.map((skill) => skill.label)], (item) => String(item).toLowerCase()).slice(0, 12);
+      return `<div class="game-frame"><div class="game-panel codex-shell">
+        <div class="codex-grid">
+        <aside class="game-card"><h4>Class And Specializations</h4><div class="game-list">${classRows}</div><div class="codex-meta-strip">${[
+          [DATA.skills.length, "Skills"], [DATA.capabilities.length, "Capabilities"], [DATA.nodes.length, "Nodes"], [DATA.summary.skill_evidence, "Evidence XP"]
+        ].map(([v,l]) => `<div class="proof-chip-big"><strong>${fmt(v)}</strong><span>${esc(l)}</span></div>`).join("")}</div></aside>
+        <section class="skill-tree game-card">
+          <div class="tree-core">Knowledge<br>Architect</div>
+          ${branches}
+        </section>
+        <aside class="game-card codex-inspector"><h4>Selected Capability</h4>
+          <div class="record-title"><strong>${esc(selected.label || "Capability")}</strong><span class="rank ${rankClass(familyRecord.rank || "S")}">${esc(familyRecord.rank || "S")}</span></div>
+          <p>${esc(selected.description || "Evidence-backed node capability.")}</p>
+          <div class="game-list" style="margin-top:12px">
+            ${codexFactRow("Mode", selected.mode || "using")}
+            ${codexFactRow("Skill Family", prettyFamily(selectedFamily))}
+            ${codexFactRow("Linked Node", selected.node_label || "Hapa Node")}
+            ${codexFactRow("Bridge Count", fmt(selected.link_count || 0))}
+            ${codexFactRow("Proof Cards", fmt(selected.card_count || 0))}
+          </div>
+          <div class="section-kicker">Success Signals</div>
+          <div class="codex-tags">${codexTags(selected.success_signals || [], "green", 8)}</div>
+          <div class="section-kicker">Connected Skills</div>
+          <div class="codex-tags">${codexTags(connectedSkills, "pink", 12)}</div>
+        </aside>
+        </div>
+        <div class="codex-inventory-grid">
+          <aside class="game-card inventory-panel">
+            <div class="inventory-head"><h4>Family Loadout</h4>${badge(`${fmt(familyRecord.skill_count || familySkills.length)} skills`, "cyan")}</div>
+            <div class="game-list codex-mini-list">${familySkillRows || `<div class="empty">No skills indexed for this family.</div>`}</div>
+            <div class="section-kicker" style="margin-top:12px">Capability Unlocks</div>
+            <div class="game-list codex-mini-list">${capabilityRows || `<div class="empty">No linked node capabilities found for this family yet.</div>`}</div>
+          </aside>
+          <aside class="game-card inventory-panel">
+            <div class="inventory-head"><h4>Linked Hapa Nodes</h4>${badge(`${fmt(familyNodes.length)} examples`, "gold")}</div>
+            <div class="game-list codex-mini-list">${linkedNodeRows || `<div class="empty">No linked nodes indexed for this family yet.</div>`}</div>
+          </aside>
+        </div>
+        <div class="codex-inventory-grid">
+          <aside class="game-card inventory-panel">
+            <div class="inventory-head"><h4>All Skills</h4>${badge(`${fmt(DATA.skills.length)} indexed`, "cyan")}</div>
+            <div class="inventory-scroll">${codexSkillInventory(selectedFamily)}</div>
+          </aside>
+          <aside class="game-card inventory-panel">
+            <div class="inventory-head"><h4>All Hapa Nodes</h4>${badge(`${fmt(DATA.nodes.length)} indexed`, "gold")}</div>
+            <div class="inventory-scroll">${codexNodeInventory(selected)}</div>
+          </aside>
+        </div>
+      </div></div>`;
+    }
+    function renderPresentationProof() {
+      const layers = proofLayers();
+      if (!layers.some((layer) => layer.key === state.proofFocus)) state.proofFocus = "skills";
+      const selected = proofLayerByKey(state.proofFocus);
+      const graphNodes = layers.map((layer) => `<button type="button" class="graph-node ${esc(layer.cls)} interactive${state.proofFocus === layer.key ? " selected" : ""}" style="--x:${layer.x}%;--y:${layer.y}%;" data-proof-focus="${esc(layer.key)}" aria-selected="${state.proofFocus === layer.key ? "true" : "false"}">${esc(layer.label)}<strong>${fmt(layer.value)}</strong></button>`).join("");
+      return `<div class="game-frame"><div class="game-panel proof-shell">
+        <div class="proof-map-grid">
+          <aside class="game-card"><h4>Proof Layers</h4><p>${esc("Click any layer to inspect how the Character Sheet moves from source intake to practice, skills, nodes, capability bridges, media, agents, and reusable protocols.")}</p><div class="proof-layer-list" style="margin-top:12px">${layers.map(proofLayerRow).join("")}</div></aside>
+          <section class="constellation">
+            ${proofEdges(layers)}
+            <span class="proof-spark"></span><span class="proof-spark"></span><span class="proof-spark"></span><span class="proof-spark"></span>
+            <div class="graph-core">Proof<br>Map</div>
+            ${graphNodes}
+          </section>
+          <aside class="game-card proof-inspector"><h4>Layer Inspector</h4>
+            <div class="record-title"><strong>${esc(selected.label)}</strong><span class="rank s">${esc(selected.code)}</span></div>
+            <p>${esc(selected.body)}</p>
+            ${proofFactRows(selected)}
+            <div class="section-kicker">Next Aggregation Lower</div>
+            ${lowerTiles(selected.lower || [])}
+            <div class="section-kicker">Examples</div>
+            ${exampleList(selected.examples || [])}
+          </aside>
+        </div>
+        ${proofFlowSteps()}
+        <div class="proof-comprehensive-grid">
+          ${proofMiniPanel("Source Systems", DATA.source_systems.slice(0, 8).map((item) => ({ label: item.source_system || "unknown", value: fmt(item.items) })))}
+          ${proofMiniPanel("Skill Families", DATA.skill_families.slice(0, 8).map((item) => ({ label: prettyFamily(item.label), value: `${fmt(item.skill_count)} skills` })))}
+          ${proofMiniPanel("Node Types", DATA.node_type_summary.slice(0, 8).map((item) => ({ label: prettyFamily(item.label), value: fmt(item.count) })))}
+          ${proofMiniPanel("Operations", [
+            { label: "Capabilities", value: fmt(DATA.capabilities.length) },
+            { label: "Media Jobs", value: fmt(DATA.media.length) },
+            { label: "Agents + Harnesses", value: fmt(DATA.agents.length + DATA.harnesses.length) },
+            { label: "Protocols + Docs", value: fmt(DATA.protocols.length + DATA.docs.length + DATA.contracts.length) },
+            { label: "Board Tasks", value: fmt(DATA.board.tasks.length) }
+          ])}
+        </div>
+      </div></div>`;
+    }
+    function nodeScorePct(node) {
+      return `${Math.max(4, Math.min(100, (Number(node?.score || 0) / NODE_SCORE_MAX) * 100))}%`;
+    }
+    function nodeScoreRank(score) {
+      const value = Number(score || 0);
+      if (value >= 1000) return "SS";
+      if (value >= 700) return "S";
+      if (value >= 400) return "A";
+      if (value >= 160) return "B";
+      if (value >= 50) return "C";
+      return "D";
+    }
+    function loadoutNodes() {
+      const type = state.loadoutType || "all";
+      const nodes = type === "all" ? DATA.nodes : DATA.nodes.filter((node) => node.node_type === type);
+      return nodes.slice().sort((a, b) => Number(b.score || 0) - Number(a.score || 0) || String(a.label || "").localeCompare(String(b.label || "")));
+    }
+    function selectedLoadoutNode() {
+      const visible = loadoutNodes();
+      let selected = DATA.nodes.find((node) => node.node_id === state.loadoutNodeId);
+      if (!selected || (state.loadoutType !== "all" && selected.node_type !== state.loadoutType)) selected = visible[0] || DATA.nodes[0] || {};
+      state.loadoutNodeId = selected.node_id || "";
+      return selected;
+    }
+    function setLoadoutHash() {
+      window.location.hash = `presentation-loadout&node=${encodeURIComponent(state.loadoutNodeId || "")}&loadoutType=${encodeURIComponent(state.loadoutType || "all")}`;
+    }
+    function selectLoadoutNode(nodeId) {
+      const selected = DATA.nodes.find((node) => node.node_id === nodeId) || DATA.nodes[0] || {};
+      state.loadoutNodeId = selected.node_id || "";
+      state.gamePanel = "loadout";
+      state.view = "presentation";
+      setLoadoutHash();
+      render();
+    }
+    function selectLoadoutType(type) {
+      state.loadoutType = type || "all";
+      const visible = loadoutNodes();
+      if (!visible.some((node) => node.node_id === state.loadoutNodeId)) state.loadoutNodeId = visible[0]?.node_id || "";
+      state.gamePanel = "loadout";
+      state.view = "presentation";
+      setLoadoutHash();
+      render();
+    }
+    function loadoutCapabilitiesForNode(node) {
+      const label = String(node?.label || "").toLowerCase();
+      return uniqueBy(DATA.capabilities.filter((capability) => {
+        const capNodeId = String(capability.node_id || "");
+        const capNodeLabel = String(capability.node_label || "").toLowerCase();
+        return capNodeId === node?.node_id || capNodeLabel === label;
+      }), (capability) => capability.node_skill_id).slice(0, 8);
+    }
+    function loadoutMediaForNode(node) {
+      const label = String(node?.label || "").toLowerCase();
+      if (!label) return [];
+      return DATA.media.filter((media) => {
+        const fields = [media.node_label, media.target_label, media.visual_label, media.prompt_text, media.direction_prompt].map((value) => String(value || "").toLowerCase()).filter(Boolean);
+        return fields.some((value) => value === label || value.includes(label) || label.includes(value));
+      }).slice(0, 8);
+    }
+    function loadoutTypeFilters() {
+      const filters = [{ label: "all known", key: "all", count: DATA.nodes.length }, ...DATA.node_type_summary.map((item) => ({ label: item.label, key: item.label, count: item.count }))];
+      return `<div class="loadout-type-filters">${filters.map((item) => `<button type="button" class="loadout-type-filter interactive${state.loadoutType === item.key ? " selected" : ""}" data-loadout-type="${esc(item.key)}" aria-selected="${state.loadoutType === item.key ? "true" : "false"}">${esc(prettyFamily(item.label))} ${fmt(item.count)}</button>`).join("")}</div>`;
+    }
+    function loadoutNodeCard(node) {
+      const selected = node.node_id === state.loadoutNodeId ? " selected" : "";
+      return `<button type="button" class="slot-card node-slot interactive${selected}" style="${nodeThemeStyle(node)}" data-loadout-node-id="${esc(node.node_id)}" aria-selected="${selected ? "true" : "false"}" aria-label="Inspect ${esc(node.label)}">
+        <div class="node-slot-top">
+          ${nodeThumb(node, "large animated")}
+          <span class="rank ${rankClass(nodeScoreRank(node.score))}">${esc(nodeScoreRank(node.score))}</span>
+        </div>
+        <div class="node-slot-body">
+          <strong>${esc(node.label)}</strong>
+          <div class="record-meta">${esc(nodeTypeLabel(node.node_type))} / ${fmt(node.score)} score</div>
+          <div class="node-slot-meter"><span style="--value:${nodeScorePct(node)}"></span></div>
+        </div>
+        <div class="node-slot-meta">
+          <span><strong>${fmt(node.topic_count)}</strong> topics</span>
+          <span><strong>${fmt(node.card_count)}</strong> cards</span>
+        </div>
+      </button>`;
+    }
+    function loadoutInspector(node) {
+      const caps = loadoutCapabilitiesForNode(node);
+      const media = loadoutMediaForNode(node);
+      const capRows = caps.map((capability) => gameListRow(capability.label, `${capability.mode || "use"} / ${fmt(capability.link_count)} links`)).join("");
+      const mediaRows = media.map((item) => gameListRow(item.target_label || item.visual_label || item.job_id, `${item.status || "media"} / ${item.media_type || "artifact"}`)).join("");
+      return `<div class="game-card loadout-inspector"><h4>Selected Node</h4>
+        <div class="node-inspector-hero">
+          ${nodeThumb(node, "large animated")}
+          <div><strong>${esc(node.label || "Hapa Node")}</strong><span>${esc(nodeTypeLabel(node.node_type))} / ${fmt(node.score)} score / ${fmt(node.card_count)} cards</span></div>
+        </div>
+        <p>${esc(node.description || "Indexed Hapa node with generated character-sheet thumbnail and linked proof metadata.")}</p>
+        <div class="game-list" style="margin-top:12px">
+          ${codexFactRow("Node Type", nodeTypeLabel(node.node_type))}
+          ${codexFactRow("Topics", fmt(node.topic_count))}
+          ${codexFactRow("Bodies", fmt(node.body_count))}
+          ${codexFactRow("Proof Cards", fmt(node.card_count))}
+          ${codexFactRow("Thumbnail", "generated node icon")}
+        </div>
+        <div class="section-kicker">Linked Capabilities</div>
+        <div class="game-list loadout-side-list">${capRows || `<div class="empty">No direct capability bridge registered for this node yet.</div>`}</div>
+        <div class="section-kicker">Related Media</div>
+        <div class="game-list loadout-side-list">${mediaRows || `<div class="empty">No direct media artifact matched; using generated node thumbnail.</div>`}</div>
+        <div class="section-kicker">Source Path</div>
+        <div class="source-link">${esc(node.source_path || node.node_id || "")}</div>
+      </div>`;
+    }
+    function renderPresentationLoadout() {
+      if (!["all", ...DATA.node_type_summary.map((item) => item.label)].includes(state.loadoutType)) state.loadoutType = "all";
+      const visibleNodes = loadoutNodes();
+      const selected = selectedLoadoutNode();
+      const relatedCaps = loadoutCapabilitiesForNode(selected);
+      const nodeSlots = visibleNodes.map((node) => loadoutNodeCard(node)).join("");
+      const agentSlots = DATA.agents.slice(0, 8).map((agent) => gameListRow(agent.label, agent.agent_kind || "agent")).join("");
+      const protocolSlots = DATA.protocols.slice(0, 8).map((protocol) => gameListRow(protocol.title, protocol.article_type || "protocol")).join("");
+      const mediaSlots = DATA.media.slice(0, 8).map((media) => gameListRow(media.target_label || media.visual_label || media.job_id, media.status || "media")).join("");
+      const summary = [
+        [visibleNodes.length, "visible nodes"],
+        [DATA.nodes.length, "known nodes"],
+        [visibleNodes.reduce((sum, node) => sum + Number(node.card_count || 0), 0), "proof cards"],
+        [relatedCaps.length, "selected links"]
+      ].map(([value, label]) => `<div class="proof-chip-big"><strong>${fmt(value)}</strong><span>${esc(label)}</span></div>`).join("");
+      return `<div class="game-frame"><div class="game-panel loadout-grid">
+        <section class="game-card loadout-armory">
+          <div class="loadout-head">
+            <div><h4>All Known Hapa Nodes</h4><p>${esc("Every indexed Hapa node is represented as equipment. Use the type filters to scan the armory, then select any node to inspect its proof, score, capabilities, media, and source path.")}</p></div>
+            ${badge(`${fmt(DATA.nodes.length)} nodes`, "gold")}
+          </div>
+          ${loadoutTypeFilters()}
+          <div class="loadout-summary-strip">${summary}</div>
+          <div class="slot-grid loadout-node-grid">${nodeSlots || `<div class="empty">No nodes match this loadout filter.</div>`}</div>
+        </section>
+        <aside class="game-side-stack">
+          ${loadoutInspector(selected)}
+          <div class="game-card"><h4>Agent Companions</h4><div class="game-list">${agentSlots}</div></div>
+          <div class="game-card"><h4>Protocol Runes</h4><div class="game-list">${protocolSlots}</div></div>
+          <div class="game-card"><h4>Media Artifacts</h4><div class="game-list">${mediaSlots}</div></div>
+        </aside>
+      </div></div>`;
+    }
+    function renderPresentationTimeline() {
+      if (!timelineLayers().some((layer) => layer.key === state.timelineLayer)) state.timelineLayer = "all";
+      if (state.timelineEra !== "all" && !(DATA.timeline?.eras || []).some((era) => era.id === state.timelineEra)) state.timelineEra = "all";
+      const selected = selectedTimelineBeat();
+      const summary = DATA.timeline?.summary || {};
+      const kpis = [
+        [summary.timeline_events, "Timeline Events"],
+        [summary.turn_events, "AI Turn Events"],
+        [summary.skill_events, "Skill Unlocks"],
+        [summary.node_events + summary.capability_events, "Node/Caps"]
+      ].map(([value, label]) => `<div class="proof-chip-big"><strong>${fmt(value)}</strong><span>${esc(label)}</span></div>`).join("");
+      const beats = timelineFilteredBeats();
+      return `<div class="game-frame"><div class="game-panel timeline-shell">
+        <div class="timeline-brief">
+          <section class="game-card timeline-title-card">
+            <div class="section-kicker">Lore / Canon Timeline</div>
+            <h3>Chronicle Rail</h3>
+            <p>${esc("A playable history of how source material, AI turns, skill consolidation, Hapa nodes, and capability unlocks became the Character Sheet's professional canon.")}</p>
+            <div class="tag-row" style="margin-top:12px">${chips(["knowledge acquired", "turn forge", "skill unlocks", "node creation", "capability canon"], "cyan")}</div>
+          </section>
+          <aside class="game-card"><h4>Timeline Scope</h4><div class="timeline-kpi-grid">${kpis}</div><div class="source-link" style="margin-top:10px">${esc(timelineDateLabel(summary.first_event_at))} -> ${esc(timelineDateLabel(summary.latest_event_at))}</div></aside>
+        </div>
+        ${timelineEraRail()}
+        ${timelineLayerRail()}
+        <div class="timeline-layout">
+          <aside class="game-card"><h4>Canon Beats</h4><p>${esc(`${fmt(beats.length)} representative beats in the current filter. Select one to inspect proof, source, metrics, and linked sheet records.`)}</p>${timelineBeatList()}</aside>
+          <section class="game-card timeline-series-panel"><h4>Historical Activity</h4><p>${esc("Monthly activity rail compressed from Second Brain metrics, with skill creation synthesized from the skill inventory projection.")}</p>${timelineSeries()}</section>
+          ${timelineInspector(selected)}
+        </div>
+        ${timelineSourcePanels()}
+      </div></div>`;
+    }
+    function passportDetail() {
+      const focus = state.passportFocus || "metric:evidence";
+      const statDescriptions = {
+        Systems: "Systems compresses data modeling, architecture, runtime, product, simulation, and engineering capability into one character-sheet attribute.",
+        Signal: "Signal describes retrieval, attribution, privacy, source quality, and relationship traversal: the ability to find the right proof at the right time.",
+        Forge: "Forge is the production stat: media pipelines, video/audio, artifacts, cards, and visual outputs created from the knowledge system.",
+        Stewardship: "Stewardship covers validation, hygiene, integrity, testing, attachment management, and keeping the Second Brain trustworthy over time.",
+        Lore: "Lore represents Hapa curation, worldbuilding, taxonomies, writing, and the knowledge memory that gives the system continuity.",
+        Tempo: "Tempo is orchestration speed: tools, agents, runtime flows, and automation that move work from idea to shipped artifact.",
+        Craft: "Craft is implementation quality across product engineering, APIs, CLI flows, design systems, Unity/3D guidance, and usable surfaces.",
+        Communion: "Communion is the bridge layer between people, agents, protocols, and shared operating memory."
+      };
+      if (focus.startsWith("metric:")) {
+        const key = focus.split(":")[1];
+        const metricMap = {
+          evidence: {
+            title: "Evidence XP",
+            kind: "Metric",
+            body: "Evidence XP is the compressed proof layer: skill-evidence records showing where abilities are supported by sources, turns, artifacts, topics, and Hapa outputs.",
+            lower: DATA.skill_families.slice(0, 8).map((family) => ({ label: family.label.replaceAll("_", " "), value: fmt(family.evidence_count) })),
+            examples: DATA.skills.slice(0, 6).map((skill) => ({ title: skill.label, meta: `${fmt(skill.evidence_count)} evidence / ${skill.rank} rank`, body: skill.summary }))
+          },
+          skills: {
+            title: "Skills",
+            kind: "Metric",
+            body: "Skills are the professional capabilities consolidated from consumed material, AI turns, Hapa outputs, and enrichment passes.",
+            lower: DATA.skill_families.slice(0, 8).map((family) => ({ label: family.label.replaceAll("_", " "), value: `${fmt(family.skill_count)} skills` })),
+            examples: DATA.skills.slice(0, 6).map((skill) => ({ title: skill.label, meta: `${skill.skill_family} / ${skill.rank} / ${fmt(skill.source_count)} sources`, body: skill.summary }))
+          },
+          nodes: {
+            title: "Hapa Nodes",
+            kind: "Metric",
+            body: "Nodes are portfolio artifacts and operating surfaces: apps, workflows, docs, protocols, and tools produced or managed inside Hapa.",
+            lower: DATA.node_type_summary.slice(0, 8).map((item) => ({ label: item.label.replaceAll("_", " "), value: fmt(item.count) })),
+            examples: DATA.nodes.slice(0, 6).map((node) => ({ title: node.label, meta: `${node.node_type} / ${fmt(node.topic_count)} topics`, body: node.description }))
+          },
+          turns: {
+            title: "AI Turns",
+            kind: "Metric",
+            body: "Turns are applied practice records: conversations where knowledge was used, artifacts were produced, and skill/result lineage can be traced.",
+            lower: aggregateBy(DATA.turns, "platform").slice(0, 8),
+            examples: DATA.turns.slice(0, 6).map((turn) => ({ title: turn.objective || turn.thread_title || turn.turn_id, meta: `${turn.platform} / ${fmt(turn.learning_link_count)} learning / ${fmt(turn.result_link_count)} result`, body: turn.model_response_summary || turn.user_excerpt }))
+          }
+        };
+        const item = metricMap[key] || metricMap.evidence;
+        return detailCard(item.title, item.kind, item.body, item.lower, item.examples);
+      }
+      if (focus.startsWith("stat:")) {
+        const label = decodeURIComponent(focus.slice(5));
+        const stat = DATA.stats.find((item) => item.label === label) || DATA.stats[0];
+        const skillExamples = (stat.top_skills || []).map((name) => DATA.skills.find((skill) => skill.label === name)).filter(Boolean);
+        return detailCard(
+          stat.label,
+          "Core Attribute",
+          statDescriptions[stat.label] || "A compressed character-sheet stat backed by skill evidence and source/result lineage.",
+          [
+            { label: "Skill Count", value: fmt(stat.skill_count) },
+            { label: "Evidence Links", value: fmt(stat.evidence) },
+            { label: "Source Count", value: fmt(stat.source_count) },
+            { label: "Attribute Value", value: fmt(stat.value) }
+          ],
+          skillExamples.map((skill) => ({ title: skill.label, meta: `${skill.skill_family} / ${skill.rank} / ${fmt(skill.evidence_count)} evidence`, body: skill.summary }))
+        );
+      }
+      if (focus.startsWith("skill:")) {
+        const id = decodeURIComponent(focus.slice(6));
+        const skill = DATA.skills.find((item) => item.skill_id === id) || DATA.skills[0];
+        const relatedCaps = DATA.capabilities.filter((cap) => cap.skill_family === skill.skill_family || cap.label.toLowerCase().includes(skill.label.toLowerCase().split(" ")[0])).slice(0, 6);
+        const relatedLinks = DATA.learning_links.filter((link) => link.skill_label === skill.label || link.skill_family === skill.skill_family).slice(0, 4);
+        return detailCard(
+          skill.label,
+          "Skill",
+          skill.summary || "A consolidated professional skill backed by Second Brain evidence, turns, and artifacts.",
+          [
+            { label: "Evidence Links", value: fmt(skill.evidence_count) },
+            { label: "Sources", value: fmt(skill.source_count) },
+            { label: "Artifacts", value: fmt(skill.artifact_count) },
+            { label: "Family", value: skill.skill_family.replaceAll("_", " ") }
+          ],
+          [
+            ...relatedCaps.map((cap) => ({ title: cap.label, meta: `${cap.mode} / ${cap.node_label}`, body: cap.description })),
+            ...relatedLinks.map((link) => ({ title: link.source_title || link.thread_title || link.link_id, meta: `${link.source_type} / score ${fmt(link.score)}`, body: link.evidence_text }))
+          ]
+        );
+      }
+      if (focus.startsWith("proof:")) {
+        const key = focus.split(":")[1];
+        const proofMap = {
+          read: {
+            title: "Read",
+            body: "Read is the intake layer: source systems and media objects that seeded knowledge, taste, references, and operating patterns.",
+            lower: DATA.source_systems.slice(0, 8).map((source) => ({ label: source.source_system || "unknown", value: fmt(source.items) })),
+            examples: DATA.mediums.slice(0, 6).map((medium) => ({ title: medium.medium || "medium", meta: `${fmt(medium.items)} items / ${fmt(medium.exposures)} exposures`, body: "Media/source category feeding the Second Brain." }))
+          },
+          learn: {
+            title: "Learn",
+            body: "Learn is consolidation: sources, topics, and evidence are grouped into skills and skill families.",
+            lower: DATA.skill_families.slice(0, 8).map((family) => ({ label: family.label.replaceAll("_", " "), value: fmt(family.skill_count) })),
+            examples: DATA.topics.slice(0, 6).map((topic) => ({ title: topic.label, meta: `${fmt(topic.evidence_count)} evidence / ${fmt(topic.skill_count)} skills`, body: topic.definition || topic.scope_note }))
+          },
+          practice: {
+            title: "Practice",
+            body: "Practice is where AI turns demonstrate skills in use: planning, building, validating, explaining, and refining outputs.",
+            lower: aggregateBy(DATA.turns, "turn_type").slice(0, 8),
+            examples: DATA.turns.slice(0, 6).map((turn) => ({ title: turn.objective || turn.thread_title || turn.turn_id, meta: `${turn.turn_type} / ${turn.platform}`, body: turn.model_response_summary || turn.user_excerpt }))
+          },
+          build: {
+            title: "Build",
+            body: "Build is the Hapa output layer: nodes, apps, protocols, media, cards, and workflows created from learning and practice.",
+            lower: DATA.node_type_summary.slice(0, 8).map((item) => ({ label: item.label.replaceAll("_", " "), value: fmt(item.count) })),
+            examples: DATA.nodes.slice(0, 6).map((node) => ({ title: node.label, meta: `${node.node_type} / ${fmt(node.card_count)} cards`, body: node.description }))
+          },
+          prove: {
+            title: "Prove",
+            body: "Prove is the evidence trail: links that justify claims by connecting skills, sources, turns, cards, artifacts, and lineage.",
+            lower: DATA.skills.slice(0, 8).map((skill) => ({ label: skill.label, value: fmt(skill.evidence_count) })),
+            examples: DATA.learning_links.slice(0, 6).map((link) => ({ title: link.source_title || link.skill_label || link.link_id, meta: `${link.source_type} / score ${fmt(link.score)}`, body: link.evidence_text }))
+          },
+          publish: {
+            title: "Publish",
+            body: "Publish is the outward-facing layer: media, screenshots, generated artifacts, protocol cards, and portfolio-ready presentation assets.",
+            lower: aggregateBy(DATA.media, "status").slice(0, 8),
+            examples: DATA.media.slice(0, 6).map((media) => ({ title: media.target_label || media.visual_label || media.job_id, meta: `${media.status} / ${media.asset_role}`, body: media.prompt_text || media.direction_prompt }))
+          }
+        };
+        const item = proofMap[key] || proofMap.read;
+        return detailCard(item.title, "Proof Trail", item.body, item.lower, item.examples);
+      }
+      if (focus.startsWith("node:")) {
+        const id = decodeURIComponent(focus.slice(5));
+        const node = DATA.nodes.find((item) => item.node_id === id) || DATA.nodes[0];
+        const caps = DATA.capabilities.filter((cap) => cap.node_id === node.node_id || cap.node_label === node.label).slice(0, 6);
+        return detailCard(
+          node.label,
+          "Portfolio Node",
+          node.description || "A Hapa node is a portfolio artifact and operating surface backed by topics, bodies, cards, and capabilities.",
+          [
+            { label: "Type", value: node.node_type.replaceAll("_", " ") },
+            { label: "Topics", value: fmt(node.topic_count) },
+            { label: "Bodies", value: fmt(node.body_count) },
+            { label: "Cards", value: fmt(node.card_count) }
+          ],
+          caps.map((cap) => ({ title: cap.label, meta: `${cap.mode} / ${cap.skill_family}`, body: cap.description }))
+        );
+      }
+      return passportDetailForDefault();
+    }
+    function passportDetailForDefault() {
+      return detailCard(
+        "Evidence XP",
+        "Metric",
+        "Evidence XP is the compressed proof layer behind the character sheet.",
+        DATA.skill_families.slice(0, 8).map((family) => ({ label: family.label.replaceAll("_", " "), value: fmt(family.evidence_count) })),
+        DATA.skills.slice(0, 6).map((skill) => ({ title: skill.label, meta: `${fmt(skill.evidence_count)} evidence / ${skill.rank} rank`, body: skill.summary }))
+      );
+    }
+    function renderPresentationPassport() {
+      const phoneStats = DATA.stats.map((stat) => gameListRow(stat.label, fmt(stat.value), "", `stat:${encodeURIComponent(stat.label)}`)).join("");
+      const featureSkills = DATA.skills.slice(0, 5).map((skill) => gameListRow(skill.label, skill.rank, "", `skill:${encodeURIComponent(skill.skill_id)}`)).join("");
+      const proofSteps = [["Read", DATA.summary.items, "proof:read"], ["Learn", DATA.skills.length, "proof:learn"], ["Practice", DATA.summary.turns, "proof:practice"], ["Build", DATA.nodes.length, "proof:build"], ["Prove", DATA.summary.skill_evidence, "proof:prove"], ["Publish", DATA.summary.media_jobs, "proof:publish"]].map(([label, value, key]) => gameListRow(label, fmt(value), "", key)).join("");
+      const portfolioNodes = DATA.nodes.slice(0, 4).map((node) => gameListRow(node.label, node.node_type, "", `node:${encodeURIComponent(node.node_id)}`)).join("");
+      return `<div class="game-frame"><div class="game-panel passport-wrap">
+        <section class="phone-frame"><div class="phone-screen">
+          <div class="phone-hero"><div class="section-kicker">Hapa Passport</div><h3>${esc(DATA.profile.name)}</h3>${badge("Rank S", "gold")} ${badge("Knowledge Architect", "cyan")}</div>
+          <div class="phone-body">
+            <div class="game-proof-strip" style="grid-template-columns:1fr 1fr">${[
+              [DATA.summary.skill_evidence, "Evidence", "metric:evidence"],
+              [DATA.skills.length, "Skills", "metric:skills"],
+              [DATA.nodes.length, "Nodes", "metric:nodes"],
+              [DATA.summary.turns, "Turns", "metric:turns"]
+            ].map(([v,l,key]) => passportChip(v, l, key)).join("")}</div>
+            <div class="game-card"><h4>Core Attributes</h4><div class="game-list">${phoneStats}</div></div>
+            <div class="game-card"><h4>Featured Skills</h4><div class="game-list">${featureSkills}</div></div>
+            <div class="game-card"><h4>Portfolio Nodes</h4><div class="game-list">${portfolioNodes}</div></div>
+          </div>
+        </div></section>
+        <aside class="game-side-stack">
+          ${passportDetail()}
+          <div class="game-card"><h4>Proof Trail</h4><div class="game-list">${proofSteps}</div></div>
+          <div class="game-card"><h4>Presentation Intent</h4><p>${esc("This mode is for human show-and-tell: tighter hierarchy, game affordances, animation-ready panels, and quick routes back to proof.")}</p>${mockGallery()}</div>
+        </aside>
+      </div></div>`;
+    }
+    function renderPresentation() {
+      const renderers = { hero: renderPresentationHero, codex: renderPresentationCodex, proof: renderPresentationProof, loadout: renderPresentationLoadout, timeline: renderPresentationTimeline, passport: renderPresentationPassport };
+      return `<div class="presentation-shell">${gameTabs()}${renderers[state.gamePanel]()}</div>`;
+    }
+    function render() {
+      applyCharacterImage();
+      setHeader();
+      renderNav();
+      renderSideStats();
+      document.querySelector(".app").classList.toggle("presentation", state.view === "presentation");
+      const renderers = { sheet: renderSheet, resume: renderResume, skills: renderSkills, nodes: renderNodes, capabilities: renderCapabilities, lineage: renderLineage, sources: renderSources, media: renderMedia, agents: renderAgents, protocols: renderProtocols, board: renderBoard };
+      document.getElementById("content").innerHTML = state.view === "presentation" ? renderPresentation() : renderers[state.panel]();
+      document.querySelectorAll("[data-show-more]").forEach((button) => button.addEventListener("click", () => { playTone("select"); state.limit += 120; render(); }));
+    }
+    document.addEventListener("click", (event) => {
+      const soundToggle = event.target.closest("[data-sound-toggle]");
+      if (soundToggle) {
+        state.sound = !state.sound;
+        localStorage.setItem("hapaCharacterSheetSfx", state.sound ? "on" : "off");
+        if (state.sound) playTone("toggle");
+        render();
+      }
+      const viewButton = event.target.closest("[data-view]");
+      if (viewButton) {
+        playTone("select");
+        state.view = viewButton.dataset.view;
+        window.location.hash = state.view === "presentation" ? `presentation-${state.gamePanel}` : "data";
+        render();
+      }
+      const gameButton = event.target.closest("[data-game-panel]");
+      if (gameButton) {
+        playTone("select");
+        state.gamePanel = gameButton.dataset.gamePanel;
+        state.view = "presentation";
+        window.location.hash = `presentation-${state.gamePanel}`;
+        render();
+      }
+      const proofFocusButton = event.target.closest("[data-proof-focus]");
+      if (proofFocusButton) {
+        setProofFocus(proofFocusButton.dataset.proofFocus);
+      }
+      const loadoutTypeButton = event.target.closest("[data-loadout-type]");
+      if (loadoutTypeButton) {
+        playTone("change");
+        selectLoadoutType(loadoutTypeButton.dataset.loadoutType);
+      }
+      const loadoutNodeButton = event.target.closest("[data-loadout-node-id]");
+      if (loadoutNodeButton) {
+        playTone("select");
+        selectLoadoutNode(loadoutNodeButton.dataset.loadoutNodeId);
+      }
+      const timelineEraButton = event.target.closest("[data-timeline-era]");
+      if (timelineEraButton) {
+        playTone("change");
+        selectTimelineEra(timelineEraButton.dataset.timelineEra);
+      }
+      const timelineLayerButton = event.target.closest("[data-timeline-layer]");
+      if (timelineLayerButton) {
+        playTone("change");
+        selectTimelineLayer(timelineLayerButton.dataset.timelineLayer);
+      }
+      const timelineBeatButton = event.target.closest("[data-timeline-beat]");
+      if (timelineBeatButton) {
+        playTone("select");
+        selectTimelineBeat(timelineBeatButton.dataset.timelineBeat);
+      }
+      const imageSourceButton = event.target.closest("[data-image-source]");
+      if (imageSourceButton) {
+        const item = (DATA.image_sources?.items || []).find((source) => source.id === imageSourceButton.dataset.imageSource);
+        if (item) setCharacterImage(item.url, item.label, item.kind);
+      }
+      const imageFilterButton = event.target.closest("[data-image-filter]");
+      if (imageFilterButton) {
+        playTone("change");
+        state.imageFilter = imageFilterButton.dataset.imageFilter;
+        try { localStorage.setItem("hapaCharacterSheetImageFilter", state.imageFilter); } catch (err) {}
+        render();
+      }
+      const imageResetButton = event.target.closest("[data-image-reset]");
+      if (imageResetButton) {
+        resetCharacterImage();
+      }
+      const imageUrlButton = event.target.closest("[data-image-url-apply]");
+      if (imageUrlButton) {
+        const input = document.querySelector("[data-image-url-input]");
+        const value = input?.value?.trim();
+        if (value) setCharacterImage(value, "Custom URL", "character_sheet");
+      }
+      const codexCapabilityButton = event.target.closest("[data-codex-capability]");
+      if (codexCapabilityButton) {
+        playTone("select");
+        selectCodexCapability(codexCapabilityButton.dataset.codexCapability);
+      }
+      const codexNodeButton = event.target.closest("[data-codex-node-id]");
+      if (codexNodeButton) {
+        playTone("select");
+        selectCodexNode(codexNodeButton.dataset.codexNodeId);
+      }
+      const codexFamilyButton = event.target.closest("[data-codex-family]");
+      if (codexFamilyButton) {
+        playTone("select");
+        selectCodexFamily(codexFamilyButton.dataset.codexFamily);
+      }
+      const passportButton = event.target.closest("[data-passport-detail]");
+      if (passportButton) {
+        playTone("select");
+        state.passportFocus = passportButton.dataset.passportDetail;
+        state.gamePanel = "passport";
+        state.view = "presentation";
+        window.location.hash = `presentation-passport&focus=${encodeURIComponent(state.passportFocus)}`;
+        render();
+      }
+      const panelButton = event.target.closest("[data-panel]");
+      if (panelButton) {
+        playTone("select");
+        state.view = "data";
+        state.panel = panelButton.dataset.panel;
+        state.limit = 120;
+        window.location.hash = "data";
+        render();
+      }
+      const levelButton = event.target.closest("[data-level]");
+      if (levelButton) {
+        playTone("change");
+        state.level = levelButton.dataset.level;
+        document.querySelectorAll("[data-level]").forEach((button) => button.classList.toggle("active", button.dataset.level === state.level));
+        render();
+      }
+    });
+    document.addEventListener("mouseover", (event) => {
+      const target = event.target.closest(".game-list-row, .proof-chip-big, .proof-step, .proof-layer-row, .proof-flow-step, .tree-branch, .graph-node, .slot-card, .loadout-type-filter, .timeline-era-card, .timeline-layer-card, .timeline-beat-card, .inventory-item, .skill-highlight-row, .image-source-row, .image-source-filters button, .image-actions button, .image-file-label, .game-tabs button, .mode-switch button, .sound-toggle");
+      if (!target || target === lastHoverTarget) return;
+      const now = performance.now();
+      if (now - lastHoverTone < 90) return;
+      lastHoverTarget = target;
+      lastHoverTone = now;
+      playTone("hover");
+    });
+    document.addEventListener("change", (event) => {
+      const input = event.target.closest("[data-image-file]");
+      if (!input || !input.files || !input.files[0]) return;
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => setCharacterImage(String(reader.result || ""), file.name, "character_sheet");
+      reader.readAsDataURL(file);
+    });
+    document.addEventListener("keydown", (event) => {
+      const target = event.target.closest(".interactive");
+      if (target && (event.key === "Enter" || event.key === " ")) {
+        event.preventDefault();
+        playTone("select");
+        if (target.dataset.passportDetail) {
+          state.passportFocus = target.dataset.passportDetail;
+          state.gamePanel = "passport";
+          state.view = "presentation";
+          window.location.hash = `presentation-passport&focus=${encodeURIComponent(state.passportFocus)}`;
+          render();
+        } else if (target.dataset.codexCapability) {
+          selectCodexCapability(target.dataset.codexCapability);
+        } else if (target.dataset.codexNodeId) {
+          selectCodexNode(target.dataset.codexNodeId);
+        } else if (target.dataset.codexFamily) {
+          selectCodexFamily(target.dataset.codexFamily);
+        } else if (target.dataset.proofFocus) {
+          setProofFocus(target.dataset.proofFocus);
+        } else if (target.dataset.loadoutNodeId) {
+          selectLoadoutNode(target.dataset.loadoutNodeId);
+        } else if (target.dataset.loadoutType) {
+          selectLoadoutType(target.dataset.loadoutType);
+        } else if (target.dataset.timelineBeat) {
+          selectTimelineBeat(target.dataset.timelineBeat);
+        } else if (target.dataset.timelineLayer) {
+          selectTimelineLayer(target.dataset.timelineLayer);
+        } else if (target.dataset.timelineEra) {
+          selectTimelineEra(target.dataset.timelineEra);
+        } else if (target.dataset.imageSource) {
+          const item = (DATA.image_sources?.items || []).find((source) => source.id === target.dataset.imageSource);
+          if (item) setCharacterImage(item.url, item.label, item.kind);
+        }
+      }
+    });
+    document.getElementById("q").addEventListener("input", (event) => { state.q = event.target.value.trim(); state.limit = 120; render(); });
+    document.getElementById("family-filter").addEventListener("change", (event) => { playTone("change"); state.family = event.target.value; state.limit = 120; render(); });
+    document.getElementById("rank-filter").addEventListener("change", (event) => { playTone("change"); state.rank = event.target.value; state.limit = 120; render(); });
+    document.getElementById("type-filter").addEventListener("change", (event) => { playTone("change"); state.type = event.target.value; state.limit = 120; render(); });
+    document.getElementById("mode-filter").addEventListener("change", (event) => { playTone("change"); state.mode = event.target.value; state.limit = 120; render(); });
+    document.getElementById("sort-filter").addEventListener("change", (event) => { playTone("change"); state.sort = event.target.value; render(); });
+    fillOptions();
+    applyCharacterImage();
+    render();
+  

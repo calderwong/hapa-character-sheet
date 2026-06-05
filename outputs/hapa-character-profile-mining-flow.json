@@ -1,0 +1,101 @@
+{
+  "id": "hapa-character-profile-mining-flow",
+  "name": "Hapa Character Profile Mining",
+  "summary": "Mine turns, skills, language, lore, agents, and proof trails into an appendable character personality dossier for humans and agentic systems.",
+  "color": 16744960,
+  "steps": [
+    {
+      "source": "Hapa Second Brain",
+      "target": "Evidence Bundle",
+      "layer": "DATA|CLI",
+      "label": "Gather turns, turn cards, wisdom, source items, skills, nodes, timeline events, agents, and board state.",
+      "explanation": [
+        "Use Character Sheet projection summaries first, then query deeper Second Brain turn/card records only when language samples or subtle claims need direct evidence.",
+        "Record the evidence window as full, recent, focused, or era-based so future refreshes can compare against the same boundary."
+      ]
+    },
+    {
+      "source": "Evidence Bundle",
+      "target": "Observation Miner",
+      "layer": "DATA|AGENT",
+      "label": "Extract small evidence-weighted claims about personality, voice, motives, lore, relationships, values, skills, and risks.",
+      "explanation": [
+        "Each observation card separates observed facts from inferences and hypotheses.",
+        "Support can come from direct quotes, repeated phrases, skill weights, output patterns, timeline patterns, board events, and relationships."
+      ]
+    },
+    {
+      "source": "Observation Miner",
+      "target": "Observation Ledger",
+      "layer": "DATA",
+      "label": "Append validated observation cards to the profile ledger.",
+      "explanation": [
+        "The ledger is append-only so older interpretations are not silently rewritten.",
+        "When an observation becomes stale or wrong, a later record supersedes it with better evidence."
+      ]
+    },
+    {
+      "source": "Observation Ledger",
+      "target": "Dossier Synthesizer",
+      "layer": "DATA|AGENT",
+      "label": "Cluster observations into dense human-readable sections and a structured JSON profile.",
+      "explanation": [
+        "The synthesizer produces sections for identity, personality core, motives, voice, lore, relationships, skills, values, risks, and open questions.",
+        "Every interpretive section includes confidence, evidence patterns, and how agents should apply the pattern."
+      ]
+    },
+    {
+      "source": "Dossier Synthesizer",
+      "target": "Human Profile Surface",
+      "layer": "UI|DOCS",
+      "label": "Render the dossier as a readable character passport, profile, or lore entry.",
+      "explanation": [
+        "Humans get a dense narrative that explains the character's history, style, relationships, outcomes, and operating philosophy.",
+        "The surface can expose drilldowns into examples, skills, turns, nodes, and timeline canon without leaking private raw history by default."
+      ]
+    },
+    {
+      "source": "Dossier Synthesizer",
+      "target": "Agent Persona Adapter",
+      "layer": "API|CLI|DATA",
+      "label": "Emit a compact persona adapter for agent systems that need to collaborate in the character's style.",
+      "explanation": [
+        "The adapter tells agents what to preserve, what phrasing patterns to emulate, which rituals/protocols matter, and what not to fake.",
+        "It explicitly separates style emulation from claiming to be the character."
+      ]
+    },
+    {
+      "source": "Profile Refresh Trigger",
+      "target": "Character Sheet Refresh Ledger",
+      "layer": "CLI|DATA",
+      "label": "Rerun after major turn imports, skill shifts, avatar changes, node/protocol additions, or owner review.",
+      "explanation": [
+        "Each refresh should record timestamp, evidence window, observation count, changed sections, and open questions.",
+        "The Character Sheet projection includes the protocol and foundation dossier so future agents can discover the system."
+      ]
+    }
+  ],
+  "card": {
+    "verb": "DISTILL",
+    "type": "Personality Dossier",
+    "rank": "Epic",
+    "grade": "A",
+    "description": "Turns lived evidence into a character profile that humans can read and agents can use as collaboration context.",
+    "effect": "Creates appendable lore/personality observations, a structured profile, a human dossier, and a persona adapter.",
+    "risk": "Unsupported biography or overconfident personality claims can mislead humans and agents if evidence status is not preserved.",
+    "stats": {
+      "impact": 9,
+      "reliability": 8,
+      "complexity": 7,
+      "cost": 4,
+      "speed": 6,
+      "teaching": 10
+    }
+  },
+  "record_rule": {
+    "second_brain": "Owns raw turns, turn cards, source material, timeline events, and lineage.",
+    "character_sheet": "Owns curated profile projections, redaction, public presentation, and agent persona adapters.",
+    "observation_ledger": "Owns append-only profile observations and supersession history.",
+    "overwatch_kanban": "Owns task/event tracking for profile mining passes."
+  }
+}

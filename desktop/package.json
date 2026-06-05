@@ -1,0 +1,15 @@
+{
+  "name": "hapa-character-sheet-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "start:profile": "electron . --route=presentation-profile",
+    "start:data": "electron . --route=",
+    "smoke": "node --check main.js && node --check preload.js"
+  },
+  "devDependencies": {
+    "electron": "^42.3.3"
+  }
+}

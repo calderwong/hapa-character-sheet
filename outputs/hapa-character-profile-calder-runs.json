@@ -1,0 +1,142 @@
+{
+  "schema_version": "hapa-character-profile-runs/0.1.0",
+  "character_id": "calder",
+  "generated_at": "2026-06-03T22:07:00+00:00",
+  "latest_pass": "run_2_sharpen",
+  "summary": {
+    "run_count": 2,
+    "ledger_observations_after_passes": 22,
+    "public_safe_default": true,
+    "owner_review_needed": true
+  },
+  "profile_runs": [
+    {
+      "id": "run_1_foundation",
+      "label": "Foundation Run",
+      "executed_at": "2026-06-03T21:45:00+00:00",
+      "method": "Character Sheet projection summary plus phrase-count scan",
+      "source_window": "6,106 turns, 126 skills, 109 nodes, 218 capabilities, 1,055 media jobs, board state, timeline summary, protocol docs",
+      "status": "filled",
+      "output_files": [
+        "HAPA_CHARACTER_PROFILE_CALDER_FOUNDATION.md",
+        "hapa-character-profile-calder-foundation.json",
+        "hapa-character-profile.observations.ndjson"
+      ],
+      "takeaways": [
+        "Calder turns identity and professional history into reusable systems.",
+        "AI collaboration is treated as cumulative evidence rather than disposable chat.",
+        "Game UI and lore are practical compression tools for professional capability.",
+        "The strongest operating loop is Read -> Learn -> Practice -> Build -> Prove -> Publish."
+      ]
+    },
+    {
+      "id": "run_2_sharpen",
+      "label": "Sharpening Run",
+      "executed_at": "2026-06-03T22:07:00+00:00",
+      "method": "Focused Second Brain mining over profile seed queries, then observation-card refinement",
+      "source_window": "Focused queries: I want, Hapa protocol, make it, agent memory",
+      "status": "sharpened",
+      "output_files": [
+        "HAPA_CHARACTER_PROFILE_CALDER_SHARPENED.md",
+        "hapa-character-profile-calder-runs.json",
+        "hapa-character-profile.observations.ndjson"
+      ],
+      "takeaways": [
+        "Calder often asks for the complete map first: summary, math, index, distillation, context, and protocol implications.",
+        "Agent trust is tied to operator-proof verification: run, authenticate, test, explain, and leave repeatable commands.",
+        "Media and memory are often modeled spatially: geometry, motion, camera perspective, timeline traversal, and playable interfaces.",
+        "The profile needs a public/agent/owner split so empathy and relationship lore can be handled without leaking private raw context."
+      ]
+    }
+  ],
+  "sharpened_observations": [
+    {
+      "id": "obs_calder_0015",
+      "category": "trait",
+      "label": "Exhaustive context hunger",
+      "claim": "Calder often wants the whole map first: complete summary, math, index, distillation, context, and usefulness before compression.",
+      "confidence": 0.88,
+      "status": "observed"
+    },
+    {
+      "id": "obs_calder_0016",
+      "category": "decision_rule",
+      "label": "Operator-proof trust standard",
+      "claim": "Agents earn trust by running the thing, authenticating, testing API/UI/CLI paths, and explaining the exact failure or success state.",
+      "confidence": 0.92,
+      "status": "observed"
+    },
+    {
+      "id": "obs_calder_0017",
+      "category": "skill",
+      "label": "Spatial media cognition",
+      "claim": "Calder often models media and memory as navigable geometry, motion, camera perspective, and playable time-space rather than flat files.",
+      "confidence": 0.82,
+      "status": "inferred"
+    },
+    {
+      "id": "obs_calder_0018",
+      "category": "value",
+      "label": "Empathy as interface goal",
+      "claim": "Some profile-relevant turns ask for questions, songs, rituals, or structures that create empathy, safety, and relational understanding.",
+      "confidence": 0.76,
+      "status": "inferred"
+    }
+  ],
+  "voice_model": [
+    {
+      "label": "Map",
+      "examples": ["complete summary", "index", "distill", "especially the math"],
+      "agent_move": "Build the overview and name the system shape."
+    },
+    {
+      "label": "Protocol",
+      "examples": ["per protocol", "apply to Hapa protocol", "up to Hapa protocol standards"],
+      "agent_move": "Translate the work into repeatable rules, contracts, and verification."
+    },
+    {
+      "label": "Execute",
+      "examples": ["make it so", "run it for me", "start/authenticate/test"],
+      "agent_move": "Do the work, run the checks, and report concrete state."
+    },
+    {
+      "label": "Sharpen",
+      "examples": ["make it comprehensive", "make it interesting", "sharpen it"],
+      "agent_move": "Increase fidelity without losing proof or usability."
+    }
+  ],
+  "evidence_examples": [
+    {
+      "id": "ai_turn:214f713083d76a99",
+      "label": "Hapa Protocol complete summary / math",
+      "signal": "complete-map request"
+    },
+    {
+      "id": "ai_turn:5207e94478d82038",
+      "label": "Index chat histories and apply to Hapa Protocol",
+      "signal": "archive-to-protocol request"
+    },
+    {
+      "id": "ai_turn:1ea42265d169a9d4",
+      "label": "API/UI/CLI start, authenticate, and test",
+      "signal": "operator-proof trust standard"
+    },
+    {
+      "id": "ai_turn:55fe984960db3ae8",
+      "label": "3D cylinder video viewer",
+      "signal": "spatial media cognition"
+    },
+    {
+      "id": "ai_turn:9bee563c49a8ca5a",
+      "label": "Calls out incomplete agent loop",
+      "signal": "trust check / anti-loop expectation"
+    }
+  ],
+  "persona_adapter_delta": [
+    "Make the map before compressing the map.",
+    "When asked to make systems real, include run/test/auth confidence where possible.",
+    "Treat game/lore presentation as an operational interface, not just theme.",
+    "Protect raw private lore and relationship material behind owner review.",
+    "For Calder-facing work, do the loop: inspect, design, implement, verify, record."
+  ]
+}

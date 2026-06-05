@@ -1,0 +1,81 @@
+{
+  "id": "hapa-character-sheet-refresh-protocol",
+  "name": "Hapa Character Sheet Refresh Protocol",
+  "summary": "Rebuild the Character Sheet from Hapa Second Brain source truth and record last refresh as an append-only event.",
+  "color": 6212308,
+  "steps": [
+    {
+      "source": "Hapa Second Brain",
+      "target": "Character Sheet Builder",
+      "layer": "DATA|CLI",
+      "label": "The refresh command reads Second Brain without mutating raw memory.",
+      "explanation": [
+        "Second Brain remains the source truth for content, skills, turns, nodes, capabilities, media, agents, and timeline records.",
+        "The Character Sheet builder materializes a presentation projection from that source so the resume/game sheet can stay fast and inspectable."
+      ]
+    },
+    {
+      "source": "Character Sheet Builder",
+      "target": "Projection Artifacts",
+      "layer": "DATA",
+      "label": "The builder regenerates JSON, browser JS, and the static prototype.",
+      "explanation": [
+        "The generated data contains current counts, stats, skills, nodes, timeline beats, media, board state, and refresh metadata.",
+        "The HTML remains a stable presentation shell while the data payload carries the updated character state."
+      ]
+    },
+    {
+      "source": "Character Sheet CLI",
+      "target": "Refresh Ledger",
+      "layer": "CLI|DATA",
+      "label": "The CLI appends refresh_started and refresh_completed or refresh_failed events.",
+      "explanation": [
+        "Refresh events are append-only records in outputs/hapa-character-sheet.refresh-log.ndjson.",
+        "The latest successful refresh is projected into refresh.last_success and summary.last_refresh_at for humans and agents."
+      ]
+    },
+    {
+      "source": "Projection Artifacts",
+      "target": "Validation Gate",
+      "layer": "CLI|API",
+      "label": "Smoke checks prove the refreshed sheet is readable.",
+      "explanation": [
+        "Validation runs Python compile, JSON checks, health, and smoke commands before the result is treated as a healthy refresh.",
+        "Failures are logged as refresh_failed and only promoted to board work when code, protocol, or human review is required."
+      ]
+    },
+    {
+      "source": "Refresh Ledger",
+      "target": "Future Agents",
+      "layer": "API|DATA",
+      "label": "Future agents inspect last refresh before changing the sheet.",
+      "explanation": [
+        "Agents start from health --deep and compare generated_at with last_refresh_at before deciding whether to rebuild.",
+        "This prevents timestamp churn while preserving a clear record of when skills, metrics, and character data were last projected."
+      ]
+    }
+  ],
+  "card": {
+    "verb": "REFRESH",
+    "type": "Projection Maintenance",
+    "rank": "Rare",
+    "grade": "A",
+    "description": "Rebuilds the Character Sheet from Second Brain and records freshness without mutating raw memory.",
+    "effect": "Updates skills, metrics, stats, nodes, media, timeline, and agent context while exposing last refresh.",
+    "risk": "If refresh logs are skipped, future agents cannot distinguish current data from stale projections.",
+    "stats": {
+      "impact": 8,
+      "reliability": 9,
+      "complexity": 5,
+      "cost": 3,
+      "speed": 7,
+      "teaching": 8
+    }
+  },
+  "record_rule": {
+    "second_brain": "Owns raw and derived memory.",
+    "character_sheet": "Owns projection artifacts, refresh protocol, and refresh ledger.",
+    "overwatch_kanban": "Owns protocol-change and implementation task history.",
+    "future_agents": "Must inspect refresh.last_success before rebuilding."
+  }
+}

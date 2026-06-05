@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "path": "outputs/exports/hapa-character-sheet-resume-public.html",
+  "format": "html",
+  "visibility": "public",
+  "provenance": "outputs/hapa-character-sheet-data.json",
+  "redaction": {
+    "schema_version": "hapa-character-sheet-runtime/0.1.0",
+    "visibility": "public",
+    "public_raw_history_limited": true,
+    "local_paths_redacted": true,
+    "owner_mode_available": true
+  }
+}

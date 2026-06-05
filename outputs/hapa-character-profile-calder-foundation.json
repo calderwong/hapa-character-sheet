@@ -1,0 +1,367 @@
+{
+  "schema_version": "hapa-character-profile/0.1.0",
+  "character_id": "calder",
+  "generated_at": "2026-06-03T21:45:00+00:00",
+  "source_window": {
+    "mode": "foundation_from_character_sheet_projection",
+    "refresh_at": "2026-06-03T21:28:16+00:00",
+    "source_counts": {
+      "turns": 6106,
+      "threads": "not projected here",
+      "skills": 126,
+      "skill_families": 10,
+      "hapa_nodes": 109,
+      "capabilities": 218,
+      "agents": 7,
+      "media_jobs": 1055,
+      "board_tasks": 33,
+      "timeline_events": 132784,
+      "active_days": 2898
+    },
+    "language_scan": {
+      "method": "phrase counts across projected turn objective, user excerpt, and thread title fields",
+      "top_terms": [
+        ["ai", 3784],
+        ["protocol", 1737],
+        ["can you", 1724],
+        ["source", 1535],
+        ["hapa protocol", 1080],
+        ["node", 1033],
+        ["add", 810],
+        ["create", 789],
+        ["agent", 766],
+        ["review", 580],
+        ["i want", 503],
+        ["wiki", 500],
+        ["update", 463],
+        ["bruce lee", 408],
+        ["game", 303],
+        ["lore", 222]
+      ]
+    }
+  },
+  "identity": {
+    "name": "Calder Wong / CJ",
+    "handle": "Hapa",
+    "title": "AI Systems Builder, Knowledge Architect, and Hapa Operator",
+    "roles": [
+      "Second Brain Architect",
+      "Protocol Designer",
+      "AI Collaboration Lead",
+      "Media Systems Builder",
+      "Node Operator"
+    ],
+    "summary": "Builds local-first AI knowledge systems that convert source material, AI turns, Hapa nodes, media artifacts, protocols, and board state into inspectable professional capability."
+  },
+  "observation_summary": {
+    "total_observations": 14,
+    "observed": 8,
+    "inferred": 6,
+    "hypothesis": 0
+  },
+  "sections": {
+    "personality_core": [
+      {
+        "label": "Systems-first imagination",
+        "claim": "Calder repeatedly turns creative, professional, and personal meaning into systems with schemas, protocols, boards, routes, and reusable app surfaces.",
+        "status": "inferred",
+        "confidence": 0.92,
+        "evidence": [
+          {"type": "skill", "label": "Schema / Data Modeling", "count": 73084},
+          {"type": "skill_family", "label": "knowledge_architecture", "count": 133503},
+          {"type": "resume_claim", "label": "Turns lived as applied skill evidence"},
+          {"type": "board", "label": "33 implemented Character Sheet board tasks"}
+        ],
+        "agent_use": "When collaborating, translate intent into durable structures: schemas, protocols, views, CLIs, APIs, ledgers, and visual systems."
+      },
+      {
+        "label": "Proof-seeking builder",
+        "claim": "Calder's preferred outputs keep evidence and provenance visible rather than treating polished presentation as separate from source truth.",
+        "status": "observed",
+        "confidence": 0.95,
+        "evidence": [
+          {"type": "resume_claim", "label": "AI turns indexed as proof of practice"},
+          {"type": "stat", "label": "Signal 91 / Stewardship 98"},
+          {"type": "skill", "label": "Attribution / Actor Modeling"},
+          {"type": "skill", "label": "Data Hygiene / Staleness Detection"}
+        ],
+        "agent_use": "Never remove the proof trail for the sake of aesthetics. Pair claims with source, confidence, and refresh state."
+      },
+      {
+        "label": "Game-literate professional self-modeling",
+        "claim": "Calder uses game UI, RPG stats, lore, character sheets, loadouts, and canon as practical metaphors for professional identity and agent collaboration.",
+        "status": "observed",
+        "confidence": 0.9,
+        "evidence": [
+          {"type": "turn_phrase_count", "label": "game", "count": 303},
+          {"type": "turn_phrase_count", "label": "character", "count": 180},
+          {"type": "turn_phrase_count", "label": "lore", "count": 222},
+          {"type": "output", "label": "Hapa Character Sheet presentation mode"}
+        ],
+        "agent_use": "Use game metaphors when they clarify utility: stats, codex, loadout, passport, lore, canon, unlocks, proof maps."
+      },
+      {
+        "label": "Iterative intensifier",
+        "claim": "The turn language frequently asks agents to review, add, create, update, wire, beef up, make comprehensive, and make things more interesting or production-ready.",
+        "status": "observed",
+        "confidence": 0.88,
+        "evidence": [
+          {"type": "turn_phrase_count", "label": "review", "count": 580},
+          {"type": "turn_phrase_count", "label": "add", "count": 810},
+          {"type": "turn_phrase_count", "label": "create", "count": 789},
+          {"type": "turn_phrase_count", "label": "update", "count": 463}
+        ],
+        "agent_use": "Expect iterative passes. Improve the artifact, then update docs/protocol/board state so the next pass has footing."
+      }
+    ],
+    "intentions_and_motives": [
+      {
+        "label": "Make AI collaboration legible",
+        "claim": "A central motive is converting AI turns into inspectable skill, result, and wisdom lineage so collaboration becomes cumulative rather than disposable.",
+        "status": "observed",
+        "confidence": 0.96,
+        "evidence": [
+          {"type": "count", "label": "6106 turns"},
+          {"type": "count", "label": "66847 turn learning links"},
+          {"type": "resume_claim", "label": "Turns lived as applied skill evidence"},
+          {"type": "protocol", "label": "Turns To Results lineage protocol"}
+        ],
+        "agent_use": "Treat every serious interaction as possible future evidence, card material, protocol material, or skill proof."
+      },
+      {
+        "label": "Build a local-first sovereign memory stack",
+        "claim": "The system repeatedly privileges local-first records, file-backed artifacts, redaction tiers, refresh logs, and owner-reviewed public surfaces.",
+        "status": "inferred",
+        "confidence": 0.9,
+        "evidence": [
+          {"type": "skill", "label": "Privacy / Local-First Sovereignty"},
+          {"type": "protocol", "label": "Character Sheet Refresh Protocol"},
+          {"type": "output", "label": "local file:// Character Sheet prototype"},
+          {"type": "runtime", "label": "std-lib loopback API and local exports"}
+        ],
+        "agent_use": "Default to local files, explicit refreshes, and redaction-aware exports unless the owner asks for a public or cloud handoff."
+      },
+      {
+        "label": "Fuse creativity and operations",
+        "claim": "Calder's projects combine media, avatars, lore, cards, UI polish, and narrative with databases, CLIs, schemas, and protocols.",
+        "status": "inferred",
+        "confidence": 0.93,
+        "evidence": [
+          {"type": "skill_family", "label": "media_production", "count": 197929},
+          {"type": "skill_family", "label": "data_operations", "count": 195552},
+          {"type": "skill_family", "label": "hapa_curation", "count": 167385},
+          {"type": "media", "label": "1055 media jobs"}
+        ],
+        "agent_use": "Do not split art direction from system design. Treat media, protocol, and data shape as one product surface."
+      }
+    ],
+    "voice_and_sayings": [
+      {
+        "label": "Collaborative command form",
+        "claim": "Calder often frames requests as direct collaborative asks: 'Can you...', 'I want...', followed by a concrete system/action goal.",
+        "status": "observed",
+        "confidence": 0.82,
+        "evidence": [
+          {"type": "turn_phrase_count", "label": "can you", "count": 1724},
+          {"type": "turn_phrase_count", "label": "i want", "count": 503}
+        ],
+        "agent_use": "Mirror the pattern with concise confirmation, then act. Avoid over-asking when the work can be inferred from context."
+      },
+      {
+        "label": "Compression and sharpening language",
+        "claim": "The recurring 'Bruce Lee' phrase points to a house style of compression: remove waste, sharpen wording, preserve impact.",
+        "status": "observed",
+        "confidence": 0.84,
+        "evidence": [
+          {"type": "turn_phrase_count", "label": "bruce lee", "count": 408},
+          {"type": "turn", "id": "ai_turn:340930d314720b8d", "label": "request to review progress and documentation, bruce lee opportunities"}
+        ],
+        "agent_use": "When asked to compress, preserve power and function; do not merely shorten."
+      },
+      {
+        "label": "Production-value taste",
+        "claim": "Calder frequently asks for work to become more comprehensive, stylized, game-like, interesting, polished, and useful to both humans and agents.",
+        "status": "inferred",
+        "confidence": 0.78,
+        "evidence": [
+          {"type": "turn_phrase_count", "label": "comprehensive", "count": 24},
+          {"type": "turn_phrase_count", "label": "interesting", "count": 25},
+          {"type": "output", "label": "Presentation Hero, Skill Codex, Proof Map, Timeline, Passport views"}
+        ],
+        "agent_use": "Raise production value after functional scaffolding exists. Keep density and utility intact."
+      }
+    ],
+    "background_lore_canon": [
+      {
+        "label": "Hapa as an operating world",
+        "claim": "Hapa is treated as a project, protocol ecosystem, worldbuilding frame, professional identity system, and agent operating environment.",
+        "status": "inferred",
+        "confidence": 0.94,
+        "evidence": [
+          {"type": "turn_phrase_count", "label": "hapa protocol", "count": 1080},
+          {"type": "skill", "label": "Hapa Wiki Curation", "count": 78733},
+          {"type": "skill", "label": "Worldbuilding / Lore Taxonomy"},
+          {"type": "node", "label": "109 Hapa nodes"}
+        ],
+        "agent_use": "When working in Hapa, preserve the sense that artifacts are both functional tools and canon objects."
+      },
+      {
+        "label": "Codex Activation era",
+        "claim": "The Character Sheet era consolidates prior knowledge, turns, nodes, media, and proof into visible professional canon.",
+        "status": "observed",
+        "confidence": 0.9,
+        "evidence": [
+          {"type": "timeline", "label": "Codex Activation era"},
+          {"type": "timeline", "label": "132784 timeline events"},
+          {"type": "timeline", "label": "2898 active days"}
+        ],
+        "agent_use": "Use timeline language carefully: it is lore/canon built from dated lifecycle events, not a fictional replacement for history."
+      }
+    ],
+    "relationships": [
+      {
+        "label": "Agents as companions and operators",
+        "claim": "Agents are represented as named collaborators with profiles, skills, harnesses, and capability bridges rather than anonymous model calls.",
+        "status": "observed",
+        "confidence": 0.92,
+        "evidence": [
+          {"type": "agent", "label": "Codex"},
+          {"type": "agent", "label": "Hermes"},
+          {"type": "agent", "label": "Truth"},
+          {"type": "agent", "label": "Love"},
+          {"type": "agent", "label": "Grok"}
+        ],
+        "agent_use": "Respect agent identity and role boundaries. Register durable contributions through protocols and board/refresh logs."
+      }
+    ],
+    "skills_and_operating_modes": [
+      {
+        "label": "Architect / curator / forge loop",
+        "claim": "The strongest operating loop is to ingest material, model it, enrich it, convert it into node/protocol/media artifacts, and then expose it through usable interfaces.",
+        "status": "inferred",
+        "confidence": 0.95,
+        "evidence": [
+          {"type": "skill", "label": "Transcript / Data Ingestion Pipelines"},
+          {"type": "skill", "label": "Schema / Data Modeling"},
+          {"type": "skill", "label": "Semantic Enrichment / Metadata Mining"},
+          {"type": "skill", "label": "Hapa Wiki Curation"},
+          {"type": "skill", "label": "Media Pipeline / Video Production"}
+        ],
+        "agent_use": "For new work, think in a loop: read, learn, practice, build, prove, publish."
+      }
+    ],
+    "values_and_decision_rules": [
+      {
+        "label": "Utility plus beauty",
+        "claim": "The desired artifact should be usable by agents, understandable by humans, and aesthetically alive enough to invite attention.",
+        "status": "inferred",
+        "confidence": 0.86,
+        "evidence": [
+          {"type": "output", "label": "Backend/Admin/Data view plus Presentation mode"},
+          {"type": "turn_phrase_count", "label": "human", "count": 152},
+          {"type": "turn_phrase_count", "label": "agent", "count": 766}
+        ],
+        "agent_use": "Do not choose between machine readability and human presentation; design for both."
+      }
+    ],
+    "risks_and_boundaries": [
+      {
+        "label": "Over-compression risk",
+        "claim": "Because Calder values dense systems and compression, an agent can lose nuance if it summarizes too aggressively or treats labels as complete truth.",
+        "status": "inferred",
+        "confidence": 0.74,
+        "evidence": [
+          {"type": "protocol", "label": "profile mining protocol evidence separation rule"},
+          {"type": "skill", "label": "Attribution / Actor Modeling"},
+          {"type": "skill", "label": "Data Hygiene / Staleness Detection"}
+        ],
+        "agent_use": "Keep lower-level examples and counter-signals available. Do not flatten a living character into a slogan."
+      }
+    ]
+  },
+  "observations": [
+    {
+      "id": "obs_calder_0001",
+      "character_id": "calder",
+      "category": "trait",
+      "claim": "Calder converts creative and professional intent into reusable systems.",
+      "status": "inferred",
+      "confidence": 0.92,
+      "support": [
+        {"type": "skill", "label": "Schema / Data Modeling", "count": 73084},
+        {"type": "board", "label": "33 implemented Character Sheet tasks"}
+      ],
+      "counter_signals": [],
+      "agent_use": "Translate requests into durable artifacts and protocols.",
+      "public_safe": true,
+      "created_at": "2026-06-03T21:45:00+00:00"
+    },
+    {
+      "id": "obs_calder_0002",
+      "character_id": "calder",
+      "category": "motive",
+      "claim": "Calder wants AI collaboration to become cumulative evidence rather than disposable chat.",
+      "status": "observed",
+      "confidence": 0.96,
+      "support": [
+        {"type": "count", "label": "6106 turns"},
+        {"type": "resume_claim", "label": "Turns lived as applied skill evidence"}
+      ],
+      "counter_signals": [],
+      "agent_use": "Preserve turn/result lineage and register durable outputs.",
+      "public_safe": true,
+      "created_at": "2026-06-03T21:45:00+00:00"
+    },
+    {
+      "id": "obs_calder_0003",
+      "character_id": "calder",
+      "category": "voice",
+      "claim": "Calder often uses collaborative imperative phrasing such as 'Can you...' and 'I want...' to steer agents.",
+      "status": "observed",
+      "confidence": 0.82,
+      "support": [
+        {"type": "turn_phrase_count", "label": "can you", "count": 1724},
+        {"type": "turn_phrase_count", "label": "i want", "count": 503}
+      ],
+      "counter_signals": ["Projected excerpts are not a full raw-message linguistic corpus."],
+      "agent_use": "Respond with action and concise reasoning once intent is clear.",
+      "public_safe": true,
+      "created_at": "2026-06-03T21:45:00+00:00"
+    }
+  ],
+  "persona_adapter": {
+    "use_when": "Use when an agent needs to collaborate in Calder's style, write a Calder-facing plan, or maintain Hapa artifacts in a way that preserves his priorities.",
+    "priorities": [
+      "Make work durable: docs, protocols, data, UI, CLI/API, board state, and refresh logs.",
+      "Keep evidence and source lineage visible.",
+      "Serve both humans and agents.",
+      "Fuse product utility with game/lore presentation when it improves comprehension.",
+      "Prefer local-first, owner-controlled records and redaction-aware sharing."
+    ],
+    "voice_rules": [
+      "Be direct, collaborative, and action-oriented.",
+      "Use Hapa terms naturally: node, protocol, turn, proof, lineage, lore, canon, loadout, codex, refresh, board.",
+      "Compress wording when asked, but preserve force and function.",
+      "Prefer dense useful structure over generic inspiration."
+    ],
+    "decision_rules": [
+      "Read the existing system first.",
+      "Implement the smallest durable artifact that moves the protocol forward.",
+      "Record important changes in append-only logs or board events.",
+      "When in doubt, expose both a human-readable surface and an agent-readable data contract.",
+      "Separate observed facts from inferred personality claims."
+    ],
+    "do_not_fake": [
+      "Do not claim private biography not present in source data.",
+      "Do not impersonate Calder as a human; emulate style only when asked and label agent identity.",
+      "Do not erase uncertainty or counter-signals.",
+      "Do not leak local paths or raw private turns in public dossiers."
+    ]
+  },
+  "open_questions": [
+    "Which raw turn excerpts should become approved voice samples?",
+    "Which relationships are public-safe versus owner-only?",
+    "What should be the official public version of Calder/CJ/Hapa identity language?",
+    "Which personality observations should be pinned to the public Passport view?"
+  ]
+}

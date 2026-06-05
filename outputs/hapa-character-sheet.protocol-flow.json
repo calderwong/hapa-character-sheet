@@ -1,0 +1,142 @@
+{
+  "id": "hapa-character-sheet-node",
+  "name": "Hapa Character Sheet Node",
+  "summary": "Turn Hapa Second Brain evidence into a professional resume, RPG character sheet, portfolio brochure, and agent-readable dossier.",
+  "color": 6212308,
+  "steps": [
+    {
+      "source": "Hapa Second Brain",
+      "target": "Hapa Character Sheet",
+      "layer": "DATA|API",
+      "label": "Character Sheet loads skills, evidence, turns, nodes, agents, media, and lineage.",
+      "explanation": [
+        "Second Brain remains the memory engine. It owns source items, exposures, skills, AI turns, node capabilities, agents, and lineage links.",
+        "Character Sheet reads those records through a narrow projection adapter so the public interface never has to expose raw personal history by default."
+      ]
+    },
+    {
+      "source": "Hapa Character Sheet",
+      "target": "Stat Engine",
+      "layer": "DATA",
+      "label": "The stat engine converts evidence into professional/RPG stats.",
+      "explanation": [
+        "Evidence counts, source diversity, result links, freshness, and review confidence become stat snapshots with formula versions.",
+        "Every score is explainable. A stat is not just a number; it is a compact proof trail for what the professional can do."
+      ]
+    },
+    {
+      "source": "Hapa Character Sheet",
+      "target": "Skill Quality Rank Engine",
+      "layer": "DATA|UI|API|CLI",
+      "label": "Skill and avatar evidence become quality and experience rankings.",
+      "explanation": [
+        "Skill Quality ranks each skill relative to the current inventory using evidence, sources, artifacts, raw score, capability reach, and node reach.",
+        "Avatar Experience ranks avatar-skill pairs from avatar dossier evidence now, and is designed to absorb direct avatar-use telemetry when that source exists."
+      ]
+    },
+    {
+      "source": "Hapa Second Brain",
+      "target": "Daily Timeline Canon",
+      "layer": "DATA|UI|API|CLI",
+      "label": "Daily buckets become a day-by-day lore and proof rail.",
+      "explanation": [
+        "The Character Sheet reads Second Brain time_bucket_day metrics and synthesized skill unlock days into timeline.series_by_scale.day.",
+        "Humans can switch the Presentation Timeline to Daily, while agents can query the same abstraction through scale=day and inspect daily_summary freshness."
+      ]
+    },
+    {
+      "source": "Hapa Second Brain",
+      "target": "Character Profile Miner",
+      "layer": "DATA|AGENT|DOCS",
+      "label": "Turns, skills, language, lore, agents, and protocols become an appendable personality dossier.",
+      "explanation": [
+        "The Character Profile Mining protocol extracts observation cards from turn patterns, repeated language, skill weights, output history, timeline events, board state, and agent relationships.",
+        "The output is a human-readable lore/personality dossier plus an agent persona adapter that preserves evidence status, confidence, redaction, and open questions."
+      ]
+    },
+    {
+      "source": "Hapa Character Sheet",
+      "target": "Resume Surface",
+      "layer": "UI|DATA",
+      "label": "Pinned claims become a readable resume and brochure surface.",
+      "explanation": [
+        "The public view shows selected outcomes, skill summaries, portfolio work, and contact/export paths without leaking private raw sources.",
+        "The owner can curate language and pin evidence so professional claims stay sharp, truthful, and useful."
+      ]
+    },
+    {
+      "source": "Hapa Character Sheet",
+      "target": "Skill Codex",
+      "layer": "UI|API",
+      "label": "Skills become explainable cards with source, turn, result, and node links.",
+      "explanation": [
+        "A skill card explains the skill in plain language, shows RPG-style rank and effect text, and links to applied examples.",
+        "Agents can ask for the same card as JSON and use the evidence routes to understand where confidence comes from."
+      ]
+    },
+    {
+      "source": "Hapa Character Sheet",
+      "target": "Agent Dossier",
+      "layer": "API|CLI",
+      "label": "The agent dossier emits a redaction-safe machine context pack.",
+      "explanation": [
+        "The dossier summarizes professional capabilities, preferred protocols, current board state, and safe next actions.",
+        "It gives AI collaborators enough structure to help without dumping every private source or unreviewed inference."
+      ]
+    },
+    {
+      "source": "Hapa Character Sheet",
+      "target": "Refresh Ledger",
+      "layer": "CLI|DATA",
+      "label": "Refresh runs rebuild the projection and record last successful freshness.",
+      "explanation": [
+        "The refresh command reads Second Brain, regenerates Character Sheet data, appends refresh events, and reprojects the latest successful timestamp.",
+        "Future humans and agents can inspect refresh.last_success before deciding whether skills, metrics, nodes, media, and timeline data need another rebuild."
+      ]
+    },
+    {
+      "source": "Hapa Character Sheet",
+      "target": "Overwatch Kanban",
+      "layer": "DATA|API|CLI",
+      "label": "Build progress and review gates are appended to the board event log.",
+      "explanation": [
+        "The board tracks schema, API, CLI, UI, desktop, privacy, export, and verification work as append-only events.",
+        "Quest Keeper and Overwatch can project the board for humans and agents while preserving the event log as the coordination source of truth."
+      ]
+    },
+    {
+      "source": "Hapa Character Sheet",
+      "target": "Node Space",
+      "layer": "DATA",
+      "label": "The protocol becomes a teachable Node Space flow and process card.",
+      "explanation": [
+        "Node Space can animate the route from Second Brain evidence to resume surface, skill codex, agent dossier, and board writeback.",
+        "The player learns how Hapa turns memory into a professional identity system while keeping provenance and redaction intact."
+      ]
+    }
+  ],
+  "card": {
+    "verb": "REVEAL",
+    "type": "Identity Dossier",
+    "rank": "Epic",
+    "grade": "A",
+    "description": "Converts source-backed memory into a showable professional sheet with stats, skills, media, lineage, and agent context.",
+    "effect": "Public viewers get a polished resume; agents get a structured evidence pack; the owner gets curation, redaction, and refresh control.",
+    "risk": "If redaction and review gates are weak, private raw history or inferred claims can leak into public outputs.",
+    "stats": {
+      "impact": 9,
+      "reliability": 8,
+      "complexity": 8,
+      "cost": 4,
+      "speed": 6,
+      "teaching": 10
+    }
+  },
+  "record_rule": {
+    "second_brain": "Owns raw and derived memory.",
+    "character_sheet": "Owns curated projections, redaction, stat snapshots, exports, and local app state.",
+    "wiki": "Owns canonical protocol explanation after review.",
+    "overwatch_kanban": "Owns append-only coordination events.",
+    "node_space": "Owns the flow visualization sidecar."
+  }
+}

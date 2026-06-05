@@ -1,0 +1,96 @@
+{
+  "id": "hapa-app-hapa-character-sheet",
+  "name": "Hapa Character Sheet App Kanban",
+  "summary": "App-specific Hapa protocol board for the Hapa Character Sheet node: resume, RPG stat sheet, skill codex, media portfolio, lineage viewer, and agent dossier.",
+  "active": true,
+  "protocolVersion": "hapa-overwatch-kanban/0.1.0",
+  "seedEventsPath": "seed/hapa-app-hapa-character-sheet.events.ndjson",
+  "columns": [
+    {
+      "id": "backlog",
+      "label": "Backlog",
+      "intent": "Known work not yet ready for implementation."
+    },
+    {
+      "id": "ready",
+      "label": "Ready",
+      "intent": "Scoped work with enough context to start."
+    },
+    {
+      "id": "in_progress",
+      "label": "In Progress",
+      "intent": "Actively owned work."
+    },
+    {
+      "id": "blocked",
+      "label": "Blocked",
+      "intent": "Work that needs a decision, dependency, or external state change."
+    },
+    {
+      "id": "review",
+      "label": "Review",
+      "intent": "Ready for owner or Overwatch review."
+    },
+    {
+      "id": "done",
+      "label": "Done",
+      "intent": "Verified and recorded."
+    }
+  ],
+  "actors": [
+    {
+      "id": "Human",
+      "label": "Human",
+      "role": "Project owner, external-claim reviewer, and visibility authority.",
+      "color": "#d6d8ff"
+    },
+    {
+      "id": "Codex",
+      "label": "Codex",
+      "role": "Implementation, docs, API/CLI/UI parity, and verification.",
+      "color": "#37d7ff"
+    },
+    {
+      "id": "Overwatch",
+      "label": "Overwatch",
+      "role": "Append-only tracking, review gates, safety, and integration evidence.",
+      "color": "#f5c85c"
+    },
+    {
+      "id": "Blue",
+      "label": "Blue",
+      "role": "Source truth, data adapter, schema, lineage, and manifests.",
+      "color": "#42b7ff"
+    },
+    {
+      "id": "Green",
+      "label": "Green",
+      "role": "UI, portfolio surface, accessibility, exports, and demo polish.",
+      "color": "#4be38a"
+    },
+    {
+      "id": "Truth",
+      "label": "Truth",
+      "role": "Claim review, privacy gates, provenance, confidence labels.",
+      "color": "#ff6f91"
+    }
+  ],
+  "protocol": {
+    "sourceTruthHierarchy": [
+      "Live Hapa Character Sheet source when created",
+      "Hapa Second Brain database and API",
+      "Hapa Protocol Standards and wiki protocol pages",
+      "Overwatch Kanban append-only event log",
+      "Quest Keeper consolidated overview"
+    ],
+    "recordRule": "Every build action, protocol decision, blocker, handoff, verification note, and human review decision is appended as an event. The board is a projection of events.",
+    "paritySurfaces": ["UI", "API", "CLI", "DATA", "DESKTOP", "TESTS", "DOCS"],
+    "safeActionPolicy": "Do not expose private source history in public exports. Do not mutate Second Brain raw memory, credentials, or wiki canon without explicit owner authorization.",
+    "questKeeper": {
+      "nodeId": "hapa-character-sheet",
+      "nodePath": "TBD after repo creation",
+      "source": "design-pack",
+      "consolidatedBy": "hapa-quest-keeper"
+    }
+  }
+}

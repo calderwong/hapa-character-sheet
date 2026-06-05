@@ -1,0 +1,787 @@
+{
+  "ok": true,
+  "profile": {
+    "name": "Calder Wong / CJ",
+    "handle": "Hapa",
+    "title": "AI Systems Builder, Knowledge Architect, and Hapa Operator",
+    "roles": [
+      "Second Brain Architect",
+      "Protocol Designer",
+      "AI Collaboration Lead",
+      "Media Systems Builder",
+      "Node Operator"
+    ],
+    "summary": "A professional character sheet that turns what was consumed, learned, practiced, built, and routed through agents into a fast, evidence-backed portfolio.",
+    "resume_summary": "Builds local-first AI knowledge systems that convert source material, AI turns, Hapa nodes, media artifacts, protocols, and board state into inspectable professional capability. Strongest indexed families include Media Pipeline / Video Production, Hapa Wiki Curation, Schema / Data Modeling, Asset / Attachment Management, Data Hygiene / Staleness Detection."
+  },
+  "resume": {
+    "claims": [
+      {
+        "title": "Turns lived as applied skill evidence",
+        "meta": "6,106 turns / 66,847 learning links",
+        "body": "AI collaboration turns are not treated as chat debris. They are indexed as proof of practice, result lineage, and reusable capability.",
+        "proof": [
+          "turn lineage",
+          "result links",
+          "wisdom cards"
+        ]
+      },
+      {
+        "title": "Knowledge intake becomes operational memory",
+        "meta": "67,819 items / 75,566 exposures",
+        "body": "Books, media, references, tools, and source systems are normalized into topic, entity, and skill projections for retrieval.",
+        "proof": [
+          "source systems",
+          "topic profiles",
+          "content chunks"
+        ]
+      },
+      {
+        "title": "Hapa nodes convert learning into apps",
+        "meta": "109 nodes / 218 node skills",
+        "body": "Capabilities are framed as using and enhancing node skills, then linked back to general skill evidence, cards, topics, and artifacts.",
+        "proof": [
+          "nodes",
+          "capabilities",
+          "bridges"
+        ]
+      }
+    ],
+    "outcomes": [
+      {
+        "title": "Built a Second Brain projection stack",
+        "meta": "SQLite, CLI, API, wiki, node maps",
+        "body": "A local-first memory system that turns consumed material, AI turns, Hapa apps, media, and protocols into queryable skill and result lineage.",
+        "tags": [
+          "data operations",
+          "retrieval",
+          "schema design"
+        ]
+      },
+      {
+        "title": "Designed protocol-aware Hapa apps",
+        "meta": "Manifest, API, CLI, board, docs",
+        "body": "Hapa nodes carry standard contracts so humans and agents can inspect, run, extend, and track them with predictable surfaces.",
+        "tags": [
+          "happ contract",
+          "protocol",
+          "kanban"
+        ]
+      },
+      {
+        "title": "Compressed professional proof into game UX",
+        "meta": "Resume + stats + evidence",
+        "body": "The Character Sheet reframes portfolio proof as RPG-readable stats without losing the evidence trail a professional evaluator needs.",
+        "tags": [
+          "resume",
+          "portfolio",
+          "skill codex"
+        ]
+      },
+      {
+        "title": "Mapped agents and harnesses to work",
+        "meta": "7 agents / 7 harness profiles",
+        "body": "Agents are represented as operating profiles with skills, runtime affordances, memory policy, and node-level capability bridges.",
+        "tags": [
+          "agents",
+          "harnesses",
+          "routing"
+        ]
+      },
+      {
+        "title": "Created media lineage for protocol artifacts",
+        "meta": "1,055 media jobs",
+        "body": "Generated images, cards, avatars, and queue records are connected to node skills, turn skills, targets, and protocol presentation roles.",
+        "tags": [
+          "media registry",
+          "cards",
+          "avatars"
+        ]
+      },
+      {
+        "title": "Tracked implementation as board state",
+        "meta": "24 seeded cards",
+        "body": "The Character Sheet is already represented as an Overwatch Kanban board with source-labeled tasks and acceptance criteria.",
+        "tags": [
+          "quest keeper",
+          "overwatch",
+          "delivery"
+        ]
+      }
+    ],
+    "proof_lanes": [
+      {
+        "label": "Knowledge",
+        "body": "Source systems, content items, exposures, topic profiles, chunks, and entities explain where capability came from.",
+        "metrics": [
+          "67,819 items",
+          "11,120 topics",
+          "199,398 chunks"
+        ]
+      },
+      {
+        "label": "Practice",
+        "body": "Turns, learning links, result links, and wisdom cards show how knowledge was applied during AI collaboration.",
+        "metrics": [
+          "6,106 turns",
+          "66,847 learning links",
+          "6,106 result links"
+        ]
+      },
+      {
+        "label": "Output",
+        "body": "Nodes, capabilities, bridges, protocol docs, media records, and board cards show what the work produced.",
+        "metrics": [
+          "109 nodes",
+          "11,658 bridges",
+          "1,055 media jobs"
+        ]
+      }
+    ]
+  },
+  "stats": [
+    {
+      "label": "Systems",
+      "value": 99,
+      "evidence": 443256,
+      "source_count": 273,
+      "skill_count": 76,
+      "top_skills": [
+        "Schema / Data Modeling",
+        "Transcript / Data Ingestion Pipelines",
+        "Semantic Enrichment / Metadata Mining",
+        "Context Engineering / Memory Packing"
+      ],
+      "detail": "76 skills / 443,256 evidence links"
+    },
+    {
+      "label": "Signal",
+      "value": 91,
+      "evidence": 92498,
+      "source_count": 43,
+      "skill_count": 5,
+      "top_skills": [
+        "Attribution / Actor Modeling",
+        "Privacy / Local-First Sovereignty",
+        "Graph Query / Relationship Traversal",
+        "Cryptographic / Provenance Integrity"
+      ],
+      "detail": "5 skills / 92,498 evidence links"
+    },
+    {
+      "label": "Forge",
+      "value": 99,
+      "evidence": 263199,
+      "source_count": 84,
+      "skill_count": 10,
+      "top_skills": [
+        "Media Pipeline / Video Production",
+        "Media Studies / Cultural Pattern Analysis",
+        "Transcript Analysis / Source Distillation",
+        "Hapa Card / Artifact System Design"
+      ],
+      "detail": "10 skills / 263,199 evidence links"
+    },
+    {
+      "label": "Stewardship",
+      "value": 98,
+      "evidence": 204570,
+      "source_count": 59,
+      "skill_count": 7,
+      "top_skills": [
+        "Asset / Attachment Management",
+        "Data Hygiene / Staleness Detection",
+        "Creator CRM / Contact Mining",
+        "Validation / Testing Harnesses"
+      ],
+      "detail": "7 skills / 204,570 evidence links"
+    },
+    {
+      "label": "Lore",
+      "value": 91,
+      "evidence": 141282,
+      "source_count": 38,
+      "skill_count": 4,
+      "top_skills": [
+        "Hapa Wiki Curation",
+        "Worldbuilding / Lore Taxonomy",
+        "Hapa Ecosystem Architecture",
+        "Technical Writing / Documentation"
+      ],
+      "detail": "4 skills / 141,282 evidence links"
+    },
+    {
+      "label": "Tempo",
+      "value": 82,
+      "evidence": 21884,
+      "source_count": 20,
+      "skill_count": 3,
+      "top_skills": [
+        "MCP / Tool Integration",
+        "Agent Orchestration",
+        "Unity Workflow Automation"
+      ],
+      "detail": "3 skills / 21,884 evidence links"
+    },
+    {
+      "label": "Craft",
+      "value": 99,
+      "evidence": 18558,
+      "source_count": 36,
+      "skill_count": 20,
+      "top_skills": [
+        "API Contract / Payload Design",
+        "CLI Workflow Design",
+        "YooAsset - Design Rules",
+        "Unity asmdef Advisor"
+      ],
+      "detail": "20 skills / 18,558 evidence links"
+    },
+    {
+      "label": "Communion",
+      "value": 78,
+      "evidence": 16871,
+      "source_count": 10,
+      "skill_count": 1,
+      "top_skills": [
+        "Protocol Design / Governance Loops"
+      ],
+      "detail": "1 skills / 16,871 evidence links"
+    }
+  ],
+  "top_skills": [
+    {
+      "skill_id": "skill:e0344f36f3120b03",
+      "label": "Media Pipeline / Video Production",
+      "skill_family": "media_production",
+      "score": 170935.59,
+      "source_count": 12,
+      "artifact_count": 34177,
+      "evidence_count": 84615,
+      "summary": "Media Pipeline / Video Production has 84615 evidence records across 14 source/medium pairs, including 34177 application or artifact paths.",
+      "related_bodies": [
+        "Media / Music / Video Production",
+        "AI / Agentic Systems",
+        "Knowledge Graphs / Second Brain",
+        "Design / UI / UX Systems",
+        "Geopolitics / History / Society",
+        "Hapa Protocol / Worldbuilding",
+        "Software / Developer Systems"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:ed92065cd8ba450c",
+      "label": "Hapa Wiki Curation",
+      "skill_family": "hapa_curation",
+      "score": 172354.48,
+      "source_count": 10,
+      "artifact_count": 42107,
+      "evidence_count": 78733,
+      "summary": "Hapa Wiki Curation has 78733 evidence records across 10 source/medium pairs, including 42107 application or artifact paths.",
+      "related_bodies": [
+        "Media / Music / Video Production",
+        "Knowledge Graphs / Second Brain",
+        "Design / UI / UX Systems",
+        "Hapa Protocol / Worldbuilding",
+        "AI / Agentic Systems",
+        "Geopolitics / History / Society",
+        "Software / Developer Systems"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:6c53f8440aaf1249",
+      "label": "Schema / Data Modeling",
+      "skill_family": "knowledge_architecture",
+      "score": 164635.5,
+      "source_count": 10,
+      "artifact_count": 38199,
+      "evidence_count": 73084,
+      "summary": "Schema / Data Modeling has 73084 evidence records across 10 source/medium pairs, including 38199 application or artifact paths.",
+      "related_bodies": [
+        "Media / Music / Video Production",
+        "Knowledge Graphs / Second Brain",
+        "Design / UI / UX Systems",
+        "AI / Agentic Systems",
+        "Hapa Protocol / Worldbuilding",
+        "Geopolitics / History / Society",
+        "Software / Developer Systems"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:d5bfbf77161de81b",
+      "label": "Asset / Attachment Management",
+      "skill_family": "data_operations",
+      "score": 126551.34,
+      "source_count": 12,
+      "artifact_count": 40552,
+      "evidence_count": 68218,
+      "summary": "Asset / Attachment Management has 68218 evidence records across 14 source/medium pairs, including 40552 application or artifact paths.",
+      "related_bodies": [
+        "Media / Music / Video Production",
+        "Knowledge Graphs / Second Brain",
+        "Design / UI / UX Systems",
+        "AI / Agentic Systems",
+        "Hapa Protocol / Worldbuilding",
+        "Geopolitics / History / Society",
+        "Software / Developer Systems"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:49897a06cc5ad0a0",
+      "label": "Data Hygiene / Staleness Detection",
+      "skill_family": "data_operations",
+      "score": 138590.96,
+      "source_count": 9,
+      "artifact_count": 37506,
+      "evidence_count": 67022,
+      "summary": "Data Hygiene / Staleness Detection has 67022 evidence records across 9 source/medium pairs, including 37506 application or artifact paths.",
+      "related_bodies": [
+        "Media / Music / Video Production",
+        "Knowledge Graphs / Second Brain",
+        "Design / UI / UX Systems",
+        "AI / Agentic Systems",
+        "Hapa Protocol / Worldbuilding",
+        "Geopolitics / History / Society",
+        "Software / Developer Systems"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:2494bd6b9d2d4a30",
+      "label": "Transcript / Data Ingestion Pipelines",
+      "skill_family": "data_engineering",
+      "score": 134408.16,
+      "source_count": 8,
+      "artifact_count": 32911,
+      "evidence_count": 64633,
+      "summary": "Transcript / Data Ingestion Pipelines has 64633 evidence records across 8 source/medium pairs, including 32911 application or artifact paths.",
+      "related_bodies": [
+        "Media / Music / Video Production",
+        "Knowledge Graphs / Second Brain",
+        "AI / Agentic Systems",
+        "Design / UI / UX Systems",
+        "Hapa Protocol / Worldbuilding",
+        "Geopolitics / History / Society",
+        "Software / Developer Systems"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:f21f240896bb1273",
+      "label": "Media Studies / Cultural Pattern Analysis",
+      "skill_family": "media_production",
+      "score": 116230.68,
+      "source_count": 10,
+      "artifact_count": 29273,
+      "evidence_count": 58108,
+      "summary": "Media Studies / Cultural Pattern Analysis has 58108 evidence records across 11 source/medium pairs, including 29273 application or artifact paths.",
+      "related_bodies": [
+        "Media / Music / Video Production",
+        "Knowledge Graphs / Second Brain",
+        "AI / Agentic Systems",
+        "Design / UI / UX Systems",
+        "Geopolitics / History / Society",
+        "Hapa Protocol / Worldbuilding",
+        "Software / Developer Systems"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:345c7b8b8a318bf4",
+      "label": "Semantic Enrichment / Metadata Mining",
+      "skill_family": "data_engineering",
+      "score": 134288.56,
+      "source_count": 9,
+      "artifact_count": 39331,
+      "evidence_count": 57335,
+      "summary": "Semantic Enrichment / Metadata Mining has 57335 evidence records across 10 source/medium pairs, including 39331 application or artifact paths.",
+      "related_bodies": [
+        "Media / Music / Video Production",
+        "Knowledge Graphs / Second Brain",
+        "Design / UI / UX Systems",
+        "AI / Agentic Systems",
+        "Hapa Protocol / Worldbuilding",
+        "Geopolitics / History / Society",
+        "Software / Developer Systems"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:40fac98fad12eadf",
+      "label": "Transcript Analysis / Source Distillation",
+      "skill_family": "media_production",
+      "score": 123816.27,
+      "source_count": 7,
+      "artifact_count": 28186,
+      "evidence_count": 55206,
+      "summary": "Transcript Analysis / Source Distillation has 55206 evidence records across 7 source/medium pairs, including 28186 application or artifact paths.",
+      "related_bodies": [
+        "Media / Music / Video Production",
+        "Knowledge Graphs / Second Brain",
+        "AI / Agentic Systems",
+        "Design / UI / UX Systems",
+        "Geopolitics / History / Society",
+        "Hapa Protocol / Worldbuilding",
+        "Software / Developer Systems"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:5e6658f914148dc4",
+      "label": "Attribution / Actor Modeling",
+      "skill_family": "integrity",
+      "score": 120113.25,
+      "source_count": 8,
+      "artifact_count": 28167,
+      "evidence_count": 54808,
+      "summary": "Attribution / Actor Modeling has 54808 evidence records across 9 source/medium pairs, including 28167 application or artifact paths.",
+      "related_bodies": [
+        "Media / Music / Video Production",
+        "Knowledge Graphs / Second Brain",
+        "AI / Agentic Systems",
+        "Design / UI / UX Systems",
+        "Geopolitics / History / Society",
+        "Hapa Protocol / Worldbuilding",
+        "Software / Developer Systems"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:399538ad2fc7af60",
+      "label": "Creator CRM / Contact Mining",
+      "skill_family": "data_operations",
+      "score": 110208.62,
+      "source_count": 8,
+      "artifact_count": 27402,
+      "evidence_count": 53920,
+      "summary": "Creator CRM / Contact Mining has 53920 evidence records across 9 source/medium pairs, including 27402 application or artifact paths.",
+      "related_bodies": [
+        "Media / Music / Video Production",
+        "Knowledge Graphs / Second Brain",
+        "AI / Agentic Systems",
+        "Geopolitics / History / Society",
+        "Design / UI / UX Systems",
+        "Hapa Protocol / Worldbuilding",
+        "Software / Developer Systems"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:5c26f3cd588c3dda",
+      "label": "Worldbuilding / Lore Taxonomy",
+      "skill_family": "hapa_curation",
+      "score": 91595.4,
+      "source_count": 9,
+      "artifact_count": 26140,
+      "evidence_count": 41343,
+      "summary": "Worldbuilding / Lore Taxonomy has 41343 evidence records across 10 source/medium pairs, including 26140 application or artifact paths.",
+      "related_bodies": [
+        "Hapa Protocol / Worldbuilding",
+        "Design / UI / UX Systems",
+        "Knowledge Graphs / Second Brain",
+        "Media / Music / Video Production",
+        "AI / Agentic Systems",
+        "Software / Developer Systems",
+        "Fantasy / Sci-Fi / Narrative Systems"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:e442d55c47a20327",
+      "label": "Context Engineering / Memory Packing",
+      "skill_family": "agent_systems",
+      "score": 75475.06,
+      "source_count": 10,
+      "artifact_count": 28022,
+      "evidence_count": 38147,
+      "summary": "Context Engineering / Memory Packing has 38147 evidence records across 10 source/medium pairs, including 28022 application or artifact paths.",
+      "related_bodies": [
+        "Media / Music / Video Production",
+        "Knowledge Graphs / Second Brain",
+        "AI / Agentic Systems",
+        "Design / UI / UX Systems",
+        "Hapa Protocol / Worldbuilding",
+        "Software / Developer Systems",
+        "Fantasy / Sci-Fi / Narrative Systems"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:7446e643175bb87b",
+      "label": "Knowledge Graph Modeling",
+      "skill_family": "knowledge_architecture",
+      "score": 52971.26,
+      "source_count": 10,
+      "artifact_count": 17840,
+      "evidence_count": 26783,
+      "summary": "Knowledge Graph Modeling has 26783 evidence records across 11 source/medium pairs, including 17840 application or artifact paths.",
+      "related_bodies": [
+        "Knowledge Graphs / Second Brain",
+        "Design / UI / UX Systems",
+        "Hapa Protocol / Worldbuilding",
+        "Media / Music / Video Production",
+        "AI / Agentic Systems",
+        "Software / Developer Systems",
+        "Strategy / Leadership / Business"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:0c4554155e72ce90",
+      "label": "Hapa Card / Artifact System Design",
+      "skill_family": "hapa_curation",
+      "score": 59753.57,
+      "source_count": 8,
+      "artifact_count": 16772,
+      "evidence_count": 26103,
+      "summary": "Hapa Card / Artifact System Design has 26103 evidence records across 8 source/medium pairs, including 16772 application or artifact paths.",
+      "related_bodies": [
+        "Hapa Protocol / Worldbuilding",
+        "Design / UI / UX Systems",
+        "Knowledge Graphs / Second Brain",
+        "AI / Agentic Systems",
+        "Media / Music / Video Production",
+        "Local-First Infrastructure / Automation",
+        "Strategy / Leadership / Business"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    },
+    {
+      "skill_id": "skill:1697c32f6e35687a",
+      "label": "Privacy / Local-First Sovereignty",
+      "skill_family": "integrity",
+      "score": 46298.26,
+      "source_count": 12,
+      "artifact_count": 15608,
+      "evidence_count": 25070,
+      "summary": "Privacy / Local-First Sovereignty has 25070 evidence records across 13 source/medium pairs, including 15608 application or artifact paths.",
+      "related_bodies": [
+        "Knowledge Graphs / Second Brain",
+        "Design / UI / UX Systems",
+        "Media / Music / Video Production",
+        "Hapa Protocol / Worldbuilding",
+        "Software / Developer Systems",
+        "AI / Agentic Systems",
+        "Local-First Infrastructure / Automation"
+      ],
+      "rank": "SS",
+      "level": 99,
+      "created_at": "2026-05-31T00:54:19+00:00",
+      "updated_at": "2026-05-31T00:54:19+00:00"
+    }
+  ],
+  "featured_nodes": [
+    {
+      "node_id": "hapa_node:42798ce9e38b5f23",
+      "label": "hapa-spaceship-desktop-hijack",
+      "node_type": "existing_node",
+      "source_path": "Nodes/Existing/hapa-spaceship-desktop-hijack.md",
+      "description": "# hapa-spaceship-desktop-hijack ## Feature Demo ## Node Classification - Type: desktop manifold / interface node - Status: working scaffold - Source path: `[redacted-local-path]` - Markers: package.json, README.md, CAMPFIRE.md, campfire-readme.md - Code files counted: 23 - Markdown docs sampled: 6 ## 2026-05-21 Documentation and License Sweep Provenance: repository-local sweep...",
+      "score": 1351.0,
+      "topic_count": 17,
+      "body_count": 5,
+      "card_count": 1479,
+      "created_at": "2026-05-31T21:33:01+00:00",
+      "updated_at": "2026-05-31T21:33:01+00:00"
+    },
+    {
+      "node_id": "hapa_node:13f0163b589c4f30",
+      "label": "Roll The Tapes Node",
+      "node_type": "proposed_node",
+      "source_path": "Nodes/Proposed/Roll-The-Tapes-Node.md",
+      "description": "# Roll The Tapes Node ## Purpose Sovereign memory and evidence replay layer for anti-gaslighting, provenance, audit trails, and context restoration. ## Feature Demo Short capture of the current Hapa-dev-proto Archives route (`/archives`) showing the local replay/history surface. ## Existing Evidence / Related Repositories - [[Nodes/Existing/pulse-node-proto-dev|pulse-node-proto-dev]] - [[Nodes/Existing/Consul-Node-Proto|Consul...",
+      "score": 925.3,
+      "topic_count": 8,
+      "body_count": 5,
+      "card_count": 1013,
+      "created_at": "2026-05-31T21:33:01+00:00",
+      "updated_at": "2026-05-31T21:33:01+00:00"
+    },
+    {
+      "node_id": "hapa_node:bcc98da86bd6fa6e",
+      "label": "Overwatch Node",
+      "node_type": "proposed_node",
+      "source_path": "Nodes/Proposed/Overwatch-Node.md",
+      "description": "# Overwatch Node ## Promoted concrete source - [[Nodes/Existing/Overwatch-Knowledgebase|Overwatch Knowledgebase Node]] - existing `.Overwatch` local operations/coordination workspace. - [[Operations/Index|Operations Index]] - detailed process/protocol pages derived from the `.Overwatch` scan. - [[Names/The Blue Architect|The Blue Architect]] - Blue/architect identity tied to cross-surface parity and `architect.hapa.nexus`. ## Purpose Operating knowledgebase...",
+      "score": 841.1,
+      "topic_count": 9,
+      "body_count": 7,
+      "card_count": 916,
+      "created_at": "2026-05-31T21:33:01+00:00",
+      "updated_at": "2026-05-31T21:33:01+00:00"
+    },
+    {
+      "node_id": "hapa_node:40cb9a1241847856",
+      "label": "Silicon Nexus Node",
+      "node_type": "proposed_node",
+      "source_path": "Nodes/Proposed/Silicon-Nexus-Node.md",
+      "description": "# Silicon Nexus Node ## Purpose Local Apple Silicon compute lighthouse; hosts inference, media, simulation, and model-serving workloads. ## Feature Demo Short capture of the current Hapa-dev-proto Local Llama route (`/local-llama`) showing the local inference control surface. ## Existing Evidence / Related Repositories - [[Nodes/Existing/gemy-hapa-project-dragon|gemy-hapa-project-dragon]] - [[Nodes/Existing/hapa-avatar-node|hapa-avatar-node]] -...",
+      "score": 694.6,
+      "topic_count": 8,
+      "body_count": 4,
+      "card_count": 758,
+      "created_at": "2026-05-31T21:33:01+00:00",
+      "updated_at": "2026-05-31T21:33:01+00:00"
+    },
+    {
+      "node_id": "hapa_node:c167ac3859bd2eac",
+      "label": "Phamiliars Companion Node",
+      "node_type": "proposed_node",
+      "source_path": "Nodes/Proposed/Phamiliars-Companion-Node.md",
+      "description": "# Phamiliars Companion Node ## Purpose Embodied companion/agent layer that turns Names and Cards into persistent assistants, game characters, and development collaborators. ## Feature Demo Short capture of the current Hapa-dev-proto Sanctuary route (`/pets`) showing the phamiliar/pet companion surface available so far. ## Existing Evidence / Related Repositories...",
+      "score": 684.0,
+      "topic_count": 7,
+      "body_count": 4,
+      "card_count": 747,
+      "created_at": "2026-05-31T21:33:01+00:00",
+      "updated_at": "2026-05-31T21:33:01+00:00"
+    },
+    {
+      "node_id": "hapa_node:dd1d2148f09a8754",
+      "label": "Card Library Node",
+      "node_type": "proposed_node",
+      "source_path": "Nodes/Proposed/Card-Library-Node.md",
+      "description": "# Card Library Node ## Purpose Portable structured memory/card store for Hapa entities, decisions, rituals, feature specs, and generated artifacts. ## Feature Demo Short capture of the current Hapa-dev-proto Card Library route (`/cards`) showing the local card-memory surface available so far. ## Existing Evidence / Related Repositories -...",
+      "score": 636.5,
+      "topic_count": 9,
+      "body_count": 6,
+      "card_count": 690,
+      "created_at": "2026-05-31T21:33:01+00:00",
+      "updated_at": "2026-05-31T21:33:01+00:00"
+    },
+    {
+      "node_id": "hapa_node:642e294842e83b38",
+      "label": "hapa-keys-node",
+      "node_type": "existing_node",
+      "source_path": "Nodes/Existing/hapa-keys-node.md",
+      "description": "# hapa-keys-node ## Feature Demo ## Node Classification - Type: key management node - Status: working scaffold - Source path: `[redacted-local-path]` - Markers: README.md, README.MD - Code files counted: 10 - Markdown docs sampled: 2 ## Purpose / Reasoning Local, loopback-by-default key management service for the Hapa node...",
+      "score": 587.9,
+      "topic_count": 9,
+      "body_count": 3,
+      "card_count": 640,
+      "created_at": "2026-05-31T21:33:01+00:00",
+      "updated_at": "2026-05-31T21:33:01+00:00"
+    },
+    {
+      "node_id": "hapa_node:099ce60f5ccec394",
+      "label": "Media Generation Node",
+      "node_type": "proposed_node",
+      "source_path": "Nodes/Proposed/Media-Generation-Node.md",
+      "description": "# Media Generation Node ## Purpose Image/audio/video/3D generation services, including avatar, video, game, trellis, and luminastem outputs. ## Feature Demo Short capture of the current Hapa-dev-proto Local Vision route (`/local-vision`) showing the media-generation control surface available so far. ## Existing Evidence / Related Repositories - [[Nodes/Existing/gemy-hapa-project-dragon|gemy-hapa-project-dragon]] - [[Nodes/Existing/hapa-ltx-node|hapa-ltx-node]]...",
+      "score": 522.8,
+      "topic_count": 9,
+      "body_count": 5,
+      "card_count": 565,
+      "created_at": "2026-05-31T21:33:01+00:00",
+      "updated_at": "2026-05-31T21:33:01+00:00"
+    },
+    {
+      "node_id": "hapa_node:64c15bf351ecbd12",
+      "label": "Wormhole Ingestion Node",
+      "node_type": "proposed_node",
+      "source_path": "Nodes/Proposed/Wormhole-Ingestion-Node.md",
+      "description": "# Wormhole Ingestion Node ## Purpose Converts raw digital exhaust, NotebookLM outputs, PDFs, logs, and repository traces into structured Cards, lore entries, task candidates, and graph edges. ## Feature Demo Short capture of the current Hapa-dev-proto Wormhole route (`/wormhole`) showing the ingestion surface available in the local workbench....",
+      "score": 432.9,
+      "topic_count": 7,
+      "body_count": 4,
+      "card_count": 468,
+      "created_at": "2026-05-31T21:33:01+00:00",
+      "updated_at": "2026-05-31T21:33:01+00:00"
+    },
+    {
+      "node_id": "hapa_node:408a44bd71d98ca1",
+      "label": "hapa-anvil-node",
+      "node_type": "existing_node",
+      "source_path": "Nodes/Existing/hapa-anvil-node.md",
+      "description": "# hapa-anvil-node ## 2026-05-21 Docs + License Sweep Provenance: reviewed and updated repository-local docs in `[redacted-local-path]`. Verified facts from the repo: - Hapa Anvil Node is a Python/FastAPI local service with CLI and browser UI surfaces. - Default service address is `http://127.0.0.1:8738`; public routes are `/` and `/health`....",
+      "score": 205.0,
+      "topic_count": 14,
+      "body_count": 5,
+      "card_count": 208,
+      "created_at": "2026-05-31T21:33:01+00:00",
+      "updated_at": "2026-05-31T21:33:01+00:00"
+    },
+    {
+      "node_id": "hapa_node:56ffb8a84c94d2b1",
+      "label": "hapa-janus-world-node",
+      "node_type": "existing_node",
+      "source_path": "Nodes/Existing/hapa-janus-world-node.md",
+      "description": "# hapa-janus-world-node ## Feature Demo ## Node Classification - Type: desktop manifold / interface node - Status: placeholder / artifact - Source path: `[redacted-local-path]` - Markers: none detected - Code files counted: 11 - Markdown docs sampled: 0 ## Purpose / Reasoning Scanned Desktop project classified as desktop...",
+      "score": 85.4,
+      "topic_count": 6,
+      "body_count": 3,
+      "card_count": 84,
+      "created_at": "2026-05-31T21:33:01+00:00",
+      "updated_at": "2026-05-31T21:33:01+00:00"
+    },
+    {
+      "node_id": "hapa_node:5cbce8316470f49d",
+      "label": "hapa-dev-proto",
+      "node_type": "existing_node",
+      "source_path": "Nodes/Existing/hapa-dev-proto.md",
+      "description": "# hapa-dev-proto: The Hapa Protocol Workbench The `hapa-dev-proto` repository represents the core desktop environment of the Hapa Operating System. It functions as a local-first, highly sovereign developer workbench and agentic orchestrator that unites cloud APIs, local silicon inference, card-based knowledge ingestion, spatial visualizations, and decentralized peer-to-peer data distribution....",
+      "score": 26.0,
+      "topic_count": 24,
+      "body_count": 6,
+      "card_count": 0,
+      "created_at": "2026-05-31T21:33:01+00:00",
+      "updated_at": "2026-05-31T21:33:01+00:00"
+    }
+  ],
+  "redaction_manifest": {
+    "schema_version": "hapa-character-sheet-runtime/0.1.0",
+    "visibility": "public",
+    "public_raw_history_limited": true,
+    "local_paths_redacted": true,
+    "owner_mode_available": true
+  }
+}

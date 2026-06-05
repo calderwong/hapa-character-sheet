@@ -1,0 +1,76 @@
+# Hapa Character Sheet Design Pack
+
+This folder contains a design-ready Hapa node package for the proposed Hapa Character Sheet app.
+
+- `HAPA_CHARACTER_SHEET_NODE_SPEC.md`: product, architecture, data, UI, CLI, API, privacy, and implementation spec.
+- `HAPA_CHARACTER_SHEET_RUNTIME.md`: runnable local CLI/API/export/desktop scaffold docs.
+- `HAPA_CHARACTER_SHEET_PROTOCOL_REGISTRATION.md`: local protocol registration and Quest Keeper discovery note.
+- `HAPA_CHARACTER_SHEET_REFRESH_PROTOCOL.md`: runbook for refreshing Character Sheet data from Second Brain and recording last refresh.
+- `HAPA_CHARACTER_SHEET_SKILL_RANKING_PROTOCOL.md`: runbook for continuously reassessing Skill Quality and Avatar Experience rankings.
+- `HAPA_CHARACTER_SHEET_DAILY_TIMELINE_PROTOCOL.md`: runbook for keeping the day-by-day Character Sheet canon view current from Second Brain timeline buckets.
+- `HAPA_CHARACTER_PROFILE_MINING_PROTOCOL.md`: repeatable process for mining a character's turns, skills, language, lore, relationships, and protocols into an appendable personality/profile dossier.
+- `HAPA_CHARACTER_PROFILE_MINING_PROMPT.md`: prompt pack for agents that need to mine character evidence and produce observation cards, human dossiers, and persona adapters.
+- `HAPA_CHARACTER_PROFILE_CALDER_FOUNDATION.md`: Calder/CJ/Hapa foundation personality and lore dossier generated from the current Character Sheet projection.
+- `HAPA_CHARACTER_PROFILE_CALDER_SHARPENED.md`: second-pass sharpened Calder profile generated from focused Second Brain turn queries.
+- `hapa-character-profile-calder-foundation.json`: structured Calder profile conforming to the profile schema.
+- `hapa-character-profile-calder-runs.json`: two-run profile mining record: foundation fill plus sharpened pass.
+- `hapa-character-profile.schema.json`: JSON schema for character profile dossiers.
+- `hapa-character-profile.observations.ndjson`: append-only seed observation ledger for personality, motive, voice, lore, relationship, skill, value, and risk claims.
+- `hapa-character-profile-mining-flow.json`: Node Space compatible profile-mining process-flow sidecar.
+- `HAPA_CHARACTER_SHEET_TIMELINE_VIEW_PHASE.md`: next-phase board brief for a stylized Timeline View that adapts Second Brain chronology into Character Sheet lore/canon.
+- `hapa-character-sheet-prototype.html`: data-driven web prototype using the existing Hapa/Astros visual asset language. The normal URL opens the Backend/Admin/Data view; `#presentation-hero`, `#presentation-codex`, `#presentation-proof`, `#presentation-loadout`, `#presentation-timeline`, `#presentation-profile`, and `#presentation-passport` open the game-style Presentation view.
+  - Presentation view includes animation/micro-interaction polish and an opt-in persisted `SFX` toggle.
+  - `#presentation-hero` now includes animated stat glyphs and animated Skill Codex thumbnails in Skill Highlights.
+  - `#presentation-hero` now includes a looping Calder Character Model video stage, model HUD overlays, poster fallback, and a model equipment/status panel.
+  - `#presentation-hero` now includes a mini Hapa Second Brain memory console that summarizes source intake, topic bloom, canon layers, and core graph counts in the empty center lane.
+  - `#presentation-hero` now includes a compact Skill Quality / Avatar Experience rank-engine preview plus a Character UI rank console attached to the model card.
+  - `#presentation-hero` includes an Image Source panel linked to Hapa Avatar Dashboard and Hapa Asset Viewer. It can swap the Character Sheet image from indexed avatar, asset-viewer, media-registry, sheet, URL, or local-file sources.
+  - `#presentation-codex` now includes GPT Image skill-family thumbnails, selectable radial branches, a central looping skill-video preview stage, capability inspector state, bounded success-signal tags, grouped all-skills/all-Hapa-nodes inventories, and a Skill Quality / Avatar Experience matrix.
+  - `#presentation-proof` now includes an animated selectable proof constellation, layer list, inspector drilldown, proof-flow chain, and comprehensive lower-level rollup panels.
+  - `#presentation-loadout` now includes all known Hapa nodes as a selectable armory with type filters, animated node thumbnails/icons, score meters, linked capability/media proof, and source-path inspection.
+  - `#presentation-timeline` now includes a historical lore/canon rail for knowledge acquired, AI turns, skill unlocks, Hapa node creation, and capability additions, with Daily/Weekly/Monthly/Yearly scale filters, a Daily Recon layer, an x-axis-aligned stacked linechart, compact activity series, source panels, and a canon inspector.
+  - `#presentation-profile` now includes the mined Calder/CJ/Hapa personality and lore profile, profile-mining runs, dossier sections, voice model, latest observation ledger cards, evidence examples, agent persona adapter, and a poster-backed cycling Persona Codex dramatic-intro video backdrop.
+- `hapa-character-sheet-data.json`: comprehensive read-only projection from Hapa Second Brain and the Character Sheet board.
+- `hapa-character-sheet-data.js`: browser-loadable copy of the same projection for local `file://` use.
+- `hapa-character-sheet.manifest.json`: proposed Hapa node manifest.
+- `hapa-character-sheet.openapi.json`: API contract draft.
+- `hapa-character-sheet.protocol-flow.json`: Node Space compatible process-flow sidecar.
+- `hapa-character-sheet.refresh-flow.json`: Node Space compatible refresh protocol sidecar.
+- `hapa-character-sheet.skill-ranking-flow.json`: Node Space compatible Skill Quality and Avatar Experience ranking flow sidecar.
+- `hapa-character-sheet.daily-timeline-flow.json`: Node Space compatible Daily Timeline refresh/view sidecar.
+- `hapa-character-profile-mining-flow.json`: Node Space compatible Character Profile / Lore Mining sidecar.
+- `hapa-character-sheet.board.config.json`: Overwatch Kanban project config draft.
+- `hapa-character-sheet.board.events.ndjson`: append-only seed board events.
+- `hapa-character-sheet.refresh-log.ndjson`: append-only refresh ledger; latest successful event is projected into `refresh.last_success` and `summary.last_refresh_at`.
+- `../bin/hapa-character-sheet`: local CLI entrypoint with health, capabilities, sheet, resume, stats, skills, skill evidence, lineage, timeline, skill-quality, portfolio, agent dossier, refresh, export, kanban, smoke, and serve commands.
+- `../hapa_character_sheet/`: shared Python runtime used by the CLI and local loopback API.
+- `../schema/hapa_character_sheet_schema.sql`: app-owned profile, section, stat snapshot, pin, privacy rule, and export manifest migration.
+- `../fixtures/hapa_character_sheet_visibility_fixture.json`: visibility/redaction fixture covering public, trusted, agent, and owner tiers.
+- `../desktop/`: standalone Electron desktop shell, Mac `.app` wrapper, workspace launcher, Desktop launcher, and local runtime dependencies.
+- `exports/hapa-character-sheet-resume-public.md`: generated public Markdown resume export with sidecar provenance manifest.
+- `assets/calder-character-video-loop.mp4`: local looping Character Model MP4 used by the Hero Detail game sheet.
+- `assets/calder-character-model-poster.jpg`: poster/fallback frame for the Character Model and image-source picker.
+- `assets/r-kick-skill.mp4`, `assets/r-run.mp4`, and `assets/r-walk.mp4`: local looping Skill Codex video previews used across skill examples.
+- `assets/r-kick-skill-poster.jpg`, `assets/r-run-poster.jpg`, and `assets/r-walk-poster.jpg`: poster/fallback frames for the Skill Codex loop stage.
+- `assets/calder-profile-dramatic-intro-01.mp4` and `assets/calder-profile-dramatic-intro-02.mp4`: local looping dramatic intro videos used as the Persona Codex Profile hero backdrop.
+- `assets/calder-profile-dramatic-intro-01-poster.jpg` and `assets/calder-profile-dramatic-intro-02-poster.jpg`: poster/fallback frames for the Profile hero backdrop cycle.
+- `hapa-character-sheet-prototype-screenshot.png`: desktop render check.
+- `hapa-character-sheet-prototype-mobile.png`: mobile render check.
+- `hapa-character-sheet-presentation-hero-screenshot.png`: Presentation view hero render check.
+- `hapa-character-sheet-presentation-hero-image-picker.png`: Presentation view hero render check with the Avatar/Asset image swapper open.
+- `hapa-character-sheet-presentation-codex-screenshot.png`: Presentation view skill codex render check.
+- `hapa-character-sheet-codex-family-sprites.png`: GPT Image sprite sheet used for Skill Codex family thumbnails and inventory media.
+- `hapa-character-sheet-presentation-proof-screenshot.png`: Presentation view animated proof map render check.
+- `hapa-character-sheet-presentation-loadout-screenshot.png`: Presentation view all-known-node armory render check.
+- `hapa-character-sheet-presentation-timeline-screenshot.png`: Presentation view Timeline lore/canon render check.
+- `hapa-character-sheet-presentation-profile-screenshot.png`: Presentation view Character Profile / Persona Codex render check.
+- `hapa-character-sheet-presentation-profile-fullpage.png`: full-page render check for the Character Profile / Persona Codex.
+- `hapa-character-sheet-presentation-passport-mobile.png`: Presentation view mobile passport render check.
+- `hapa-character-sheet-presentation-passport-inspector.png`: Passport inspector render check with a selected metric and lower aggregation examples.
+- `HAPA_CHARACTER_SHEET_GAME_VIEW_MOCKS.md`: second-view visual direction notes.
+- `hapa-character-sheet-game-mock-01-hero-detail.png`: high-production hero character detail mock.
+- `hapa-character-sheet-game-mock-02-proof-constellation.png`: evidence constellation / proof map mock.
+- `hapa-character-sheet-game-mock-03-skill-codex.png`: skill tree / loadout mock.
+- `hapa-character-sheet-game-mock-04-mobile-passport.png`: mobile game passport mock.
+
+Reviewed local sources include the Hapa front-door repo, Hapa Worldbuilding Wiki, Hapa Second Brain, Hapa Protocol Standards, Node Space process flows, Quest Keeper, and Overwatch Kanban.

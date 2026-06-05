@@ -1,0 +1,51 @@
+{
+  "id": "hapa-character-sheet-daily-timeline-flow",
+  "title": "Daily Timeline Refresh And View Flow",
+  "node": "hapa-character-sheet",
+  "protocol_doc": "outputs/HAPA_CHARACTER_SHEET_DAILY_TIMELINE_PROTOCOL.md",
+  "status": "implemented",
+  "steps": [
+    {
+      "id": "source-events",
+      "label": "Refresh Second Brain Events",
+      "actor": "agent_or_owner",
+      "command": "python3 second_brain.py refresh-timeline",
+      "output": "information_timeline_events"
+    },
+    {
+      "id": "activity-buckets",
+      "label": "Refresh Day Buckets",
+      "actor": "agent_or_owner",
+      "command": "python3 second_brain.py refresh-timeline-activity",
+      "output": "timeline_activity_metrics.time_bucket_day"
+    },
+    {
+      "id": "character-projection",
+      "label": "Rebuild Character Sheet Projection",
+      "actor": "hapa-character-sheet-cli",
+      "command": "bin/hapa-character-sheet refresh calder --from-second-brain",
+      "output": "outputs/hapa-character-sheet-data.json"
+    },
+    {
+      "id": "daily-api",
+      "label": "Expose Daily API",
+      "actor": "hapa-character-sheet-runtime",
+      "command": "bin/hapa-character-sheet timeline calder --scale day",
+      "output": "timeline.series + timeline.daily_summary"
+    },
+    {
+      "id": "presentation-view",
+      "label": "Render Daily Canon View",
+      "actor": "browser_ui",
+      "route": "outputs/hapa-character-sheet-prototype.html#presentation-timeline&scale=day",
+      "output": "Daily Recon Layer and day-level activity rail"
+    }
+  ],
+  "acceptance": [
+    "series_by_scale.day exists and contains day buckets",
+    "daily_summary.active_days, latest_day, and peak_day are populated",
+    "CLI and API both accept scale=day",
+    "Presentation Timeline can switch between Daily, Weekly, Monthly, and Yearly",
+    "Refresh log records the last successful rebuild"
+  ]
+}
