@@ -64,3 +64,13 @@ If an optional source is missing, the builder skips that enrichment and keeps th
 ## GitHub/doc registration
 
 The app is registered as `hapa-character-sheet` in the Hapa docs/catalog layer. Its Kanban project id is `hapa-app-hapa-character-sheet`, and its local API defaults to `http://127.0.0.1:8794`.
+
+<!-- HAPA_NODE_ATLAS_DEMO:START -->
+## See It In Action
+
+<a href="https://calderwong.github.io/hapa-node-atlas/">
+  <img src="https://calderwong.github.io/hapa-node-atlas/assets/atalas-hero-loop-poster.jpg" alt="Hapa Node Atlas live demo" width="360">
+</a>
+
+[Open the Hapa Node Atlas demo](https://calderwong.github.io/hapa-node-atlas/)
+<!-- HAPA_NODE_ATLAS_DEMO:END -->
